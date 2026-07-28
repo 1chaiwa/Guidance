@@ -902,13 +902,14 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  SUPABASE CONFIG
+        //  SUPABASE CONFIG - CORRECT URL
         // ================================================================
         const SUPABASE_URL = 'https://ruclrfnyepexetxslsnqk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3JsZm55ZXBleGV0eHNsbnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDAxNTQsImV4cCI6MjEwMDgxNjE1NH0.I9aTd8eYkC0LsVeUz9s5j8-pxUmEcaXB9u4vtKU9nhI';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Supabase initialized');
+        console.log('🔗 Connected to: ' + SUPABASE_URL);
 
         // ================================================================
         //  STATE
