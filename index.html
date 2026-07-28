@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mungwi District School Data System</title>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    </script>
+
+    <style>
+        /* ----- RESET & BASE ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* ----- LAYOUT ----- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ----- HEADER ----- */
+        .app-header {
+            background: linear-gradient(135deg, #0f3b5e, #1a5a7a);
+            color: #fff;
+            padding: 18px 30px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .app-header h1 small {
+            font-weight: 300;
+            font-size: 14px;
+            opacity: 0.8;
+            margin-left: 8px;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .header-actions .user-badge {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-actions .user-badge .role-tag {
+            background: #facc15;
+            color: #0f3b5e;
+            font-weight: 600;
+            padding: 0 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        .btn {
+            padding: 8px 22px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #2d7d9a;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1f5f77;
+            transform: translateY(-1px);
+        }
+        .btn-success {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-warning {
+            background: #eab308;
+            color: #1e293b;
+        }
+        .btn-warning:hover {
+            background: #ca8a04;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border: 1.5px solid rgba(255, 255, 255, 0.5);
+        }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .btn-sm {
+            padding: 5px 14px;
+            font-size: 12px;
+        }
+
+        /* ----- CARDS ----- */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            border: 1px solid #e9edf2;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #0f3b5e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title .badge {
+            background: #e9edf2;
+            color: #1e293b;
+            font-size: 12px;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-weight: 400;
+        }
+
+        /* ----- LOGIN ----- */
+        .login-wrapper {
+            max-width: 440px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 36px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9edf2;
+        }
+        .login-wrapper h2 {
+            text-align: center;
+            color: #0f3b5e;
+            margin-bottom: 8px;
+            font-size: 26px;
+        }
+        .login-wrapper .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #334155;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d1d9e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+            background: #fafbfc;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2d7d9a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(45, 125, 154, 0.15);
+            background: #fff;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* ----- TABLE ----- */
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        table th {
+            background: #f1f5f9;
+            color: #1e293b;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 2px solid #d1d9e6;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9edf2;
+            vertical-align: middle;
+        }
+        table tr:hover td {
+            background: #f8fafc;
+        }
+        table .total-row td {
+            background: #f1f5f9;
+            font-weight: 600;
+            border-top: 2px solid #d1d9e6;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-muted {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* ----- ALERTS ----- */
+        .alert {
+            padding: 14px 20px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* ----- HIDDEN / UTILITY ----- */
+        .hidden {
+            display: none !important;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mt-20 {
+            margin-top: 20px;
+        }
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+        .flex {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .w-full {
+            width: 100%;
+        }
+
+        /* ----- STATS ----- */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e9edf2;
+            text-align: center;
+        }
+        .stat-box .num {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f3b5e;
+        }
+        .stat-box .label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* ----- RESPONSIVE ----- */
+        @media (max-width: 768px) {
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+            .app-header h1 {
+                font-size: 18px;
+            }
+            .app-header h1 small {
+                display: block;
+                margin-left: 0;
+            }
+            .login-wrapper {
+                padding: 28px 20px;
+                margin: 30px 16px;
+            }
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .card {
+                padding: 16px;
+            }
+            table {
+                font-size: 12px;
+            }
+            table th,
+            table td {
+                padding: 6px 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .header-actions .user-badge {
+                font-size: 12px;
+                padding: 4px 12px;
+            }
+        }
+
+        /* scrollable table container with max-height */
+        .table-scroll {
+            max-height: 520px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #e9edf2;
+        }
+        .table-scroll table thead {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        /* loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e9edf2;
+            border-top-color: #2d7d9a;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loading-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 0;
+            gap: 12px;
+            color: #64748b;
+        }
+
+        /* toggle switch for admin */
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .toggle-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #2d7d9a;
+            cursor: pointer;
+        }
+
+        /* School selector in teacher view */
+        .school-selector {
+            background: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #e9edf2;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .school-selector label {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .school-selector select {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1.5px solid #d1d9e6;
+            font-size: 14px;
+            background: #fff;
+            min-width: 200px;
+        }
+
+        /* entry form inline */
+        .entry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .entry-grid .form-group {
+            margin-bottom: 0;
+        }
+        .entry-grid .form-group label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        .entry-grid .form-group input {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .entry-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            padding-top: 6px;
+        }
+        .entry-actions .btn {
+            padding: 8px 24px;
+        }
+
+        /* tabs */
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            border-bottom: 2px solid #e9edf2;
+            margin-bottom: 20px;
+        }
+        .tab-bar .tab {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: 0.2s;
+            border-radius: 6px 6px 0 0;
+        }
+        .tab-bar .tab.active {
+            color: #0f3b5e;
+            border-bottom-color: #2d7d9a;
+            background: #f8fafc;
+        }
+        .tab-bar .tab:hover:not(.active) {
+            color: #1e293b;
+            background: #f1f5f9;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* small helper */
+        .inline-flex {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .text-green {
+            color: #16a34a;
+        }
+        .text-red {
+            color: #dc2626;
+        }
+        .fw-600 {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================ -->
+    <!-- LOGIN VIEW -->
+    <!-- ============================================================ -->
+    <div id="loginView" class="container">
+        <div class="login-wrapper">
+            <h2>📊 Mungwi District</h2>
+            <p class="subtitle">School Data Collection System — Term 2 2025</p>
+
+            <div id="loginAlert" class="hidden"></div>
+
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="teacher@school.gov.zm" required />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required />
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="loginRole">
+                        <option value="teacher">👨‍🏫 Teacher / Guidance</option>
+                        <option value="admin">👤 Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-full" style="width:100%;justify-content:center;padding:12px;">
+                    Sign In
+                </button>
+            </form>
+
+            <p style="margin-top:20px;font-size:13px;color:#94a3b8;text-align:center;">
+                Demo: <strong>teacher@demo.com</strong> / <strong>admin@demo.com</strong> (any password)<br />
+                <span style="font-size:12px;">(Supabase auth will be used in production)</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MAIN APP VIEW (hidden until login) -->
+    <!-- ============================================================ -->
+    <div id="appView" class="hidden">
+
+        <!-- HEADER -->
+        <div class="container" style="padding-bottom:0;">
+            <div class="app-header">
+                <h1>📋 Mungwi District <small>Term 2 · 2025</small></h1>
+                <div class="header-actions">
+                    <span class="user-badge" id="userBadge">
+                        <span id="userName">User</span>
+                        <span class="role-tag" id="userRoleTag">teacher</span>
+                    </span>
+                    <button class="btn btn-outline btn-sm" onclick="handleLogout()">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+
+            <!-- ========================================================== -->
+            <!-- ADMIN VIEW -->
+            <!-- ========================================================== -->
+            <div id="adminPanel" class="hidden">
+
+                <!-- Tabs -->
+                <div class="tab-bar">
+                    <button class="tab active" data-tab="adminDashboard">📊 Dashboard</button>
+                    <button class="tab" data-tab="adminSchools">🏫 Schools</button>
+                    <button class="tab" data-tab="adminData">📋 All Data</button>
+                    <button class="tab" data-tab="adminExport">📥 Export</button>
+                </div>
+
+                <!-- Tab: Dashboard -->
+                <div id="tab-adminDashboard" class="tab-content active">
+                    <div class="card">
+                        <div class="card-title">📊 District Summary</div>
+                        <div id="adminStats" class="stat-grid">
+                            <div class="stat-box"><div class="num" id="statSchools">-</div><div class="label">Schools</div></div>
+                            <div class="stat-box"><div class="num" id="statTotalEnrol">-</div><div class="label">Total Enrolment</div></div>
+                            <div class="stat-box"><div class="num" id="statTeenPreg">-</div><div class="label">Teen Pregnancies</div></div>
+                            <div class="stat-box"><div class="num" id="statDropouts">-</div><div class="label">Dropouts</div></div>
+                            <div class="stat-box"><div class="num" id="statAbsenteeism">-</div><div class="label">Absenteeism</div></div>
+                            <div class="stat-box"><div class="num" id="statOVC">-</div><div class="label">OVC</div></div>
+                        </div>
+                        <div style="font-size:13px;color:#64748b;">
+                            <span id="lastUpdatedAdmin">Last updated: —</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">📈 Quick Overview</div>
+                        <p style="color:#64748b;font-size:14px;">Select <strong>"All Data"</strong> tab to view and filter all school records.</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Schools -->
+                <div id="tab-adminSchools" class="tab-content">
+                    <div class="card">
+                        <div class="flex-between">
+                            <div class="card-title" style="margin-bottom:0;">🏫 Manage Schools</div>
+                            <button class="btn btn-success btn-sm" onclick="showAddSchoolForm()">+ Add School</button>
+                        </div>
+                        <div id="addSchoolForm" class="hidden" style="margin-top:16px;padding:16px;background:#f8fafc;border-radius:10px;border:1px solid #e9edf2;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>School Name</label>
+                                    <input type="text" id="newSchoolName" placeholder="e.g. CHAMFUBU PRIMARY" />
+                                </div>
+                                <div class="form-group" style="display:flex;align-items:flex-end;">
+                                    <button class="btn btn-primary" onclick="addSchool()">Add School</button>
+                                    <button class="btn btn-outline" style="color:#1e293b;border-color:#d1d9e6;" onclick="document.getElementById('addSchoolForm').classList.add('hidden')">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-wrap mt-12">
+                            <table>
+                                <thead><tr><th>#</th><th>School Name</th><th>Actions</th></tr></thead>
+                                <tbody id="schoolListBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: All Data -->
+                <div id="tab-adminData" class="tab-content">
+                    <div class="card">
+                        <div class="flex-between">
+                            <div class="card-title" style="margin-bottom:0;">📋 All School Records</div>
+                            <div class="flex">
+                                <select id="adminFilterSchool" onchange="loadAdminData()" style="padding:6px 12px;border-radius:8px;border:1.5px solid #d1d9e6;font-size:13px;">
+                                    <option value="">All Schools</option>
+                                </select>
+                                <button class="btn btn-primary btn-sm" onclick="loadAdminData()">⟳ Refresh</button>
+                            </div>
+                        </div>
+                        <div class="table-scroll mt-12">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>School</th>
+                                        <th>Grade</th>
+                                        <th>Boys</th>
+                                        <th>Girls</th>
+                                        <th>Total</th>
+                                        <th>Age Range</th>
+                                        <th>Teen Preg</th>
+                                        <th>Dropouts</th>
+                                        <th>Absenteeism</th>
+                                        <th>Re-entry</th>
+                                        <th>OVC</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminDataBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Export -->
+                <div id="tab-adminExport" class="tab-content">
+                    <div class="card">
+                        <div class="card-title">📥 Export Data</div>
+                        <p style="color:#64748b;margin-bottom:16px;">Download all school records as an Excel file (.xlsx).</p>
+                        <div class="flex">
+                            <button class="btn btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
+                            <button class="btn btn-outline" style="color:#1e293b;border-color:#d1d9e6;" onclick="exportToCSV()">📄 Export CSV</button>
+                        </div>
+                        <div style="margin-top:16px;font-size:13px;color:#94a3b8;">
+                            The export includes: School, Grade, Enrolment (Boys/Girls/Total), Age Range, Teen Pregnancy,
+                            Dropouts by category, Absenteeism, Re-entry, and OVC.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- TEACHER VIEW -->
+            <!-- ========================================================== -->
+            <div id="teacherPanel" class="hidden">
+
+                <div class="card">
+                    <div class="flex-between">
+                        <div class="card-title" style="margin-bottom:0;">🏫 My School Data</div>
+                        <span id="teacherSchoolName" style="font-size:14px;color:#64748b;font-weight:500;"></span>
+                    </div>
+
+                    <!-- School selector (if teacher has multiple schools) -->
+                    <div id="teacherSchoolSelector" class="school-selector hidden mt-12">
+                        <label>Select School:</label>
+                        <select id="teacherSchoolSelect" onchange="loadTeacherData()"></select>
+                    </div>
+
+                    <!-- Add / Edit Entry -->
+                    <div style="margin-top:18px;padding:16px;background:#f8fafc;border-radius:10px;border:1px solid #e9edf2;">
+                        <div style="font-weight:600;font-size:15px;margin-bottom:12px;" id="entryFormTitle">➕ Add New Entry</div>
+                        <form id="entryForm" onsubmit="return saveEntry(event)">
+                            <input type="hidden" id="editEntryId" value="" />
+
+                            <div class="form-row-3">
+                                <div class="form-group">
+                                    <label>Grade</label>
+                                    <input type="text" id="fGrade" placeholder="e.g. 1, 2, 3, ECE, 8, 9..." required />
+                                </div>
+                                <div class="form-group">
+                                    <label>Age Range</label>
+                                    <input type="text" id="fAgeRange" placeholder="e.g. 6–11, 13–17" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Enrolment Boys</label>
+                                    <input type="number" id="fEnrolBoys" value="0" min="0" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Enrolment Girls</label>
+                                    <input type="number" id="fEnrolGirls" value="0" min="0" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Teen Preg (Girls)</label>
+                                    <input type="number" id="fTeenPreg" value="0" min="0" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Early Marriage Boys</label>
+                                    <input type="number" id="fEarlyMarriageBoys" value="0" min="0" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Early Marriage Girls</label>
+                                    <input type="number" id="fEarlyMarriageGirls" value="0" min="0" />
+                                </div>
+                            </div>
+
+                            <div style="font-weight:500;font-size:14px;margin:12px 0 8px;color:#0f3b5e;">📌 Dropouts due to:</div>
+                            <div class="form-row-3">
+                                <div class="form-group"><label>Pregnancy Boys</label><input type="number" id="fDropPregBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Pregnancy Girls</label><input type="number" id="fDropPregGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Marriage Boys</label><input type="number" id="fDropMarriageBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Marriage Girls</label><input type="number" id="fDropMarriageGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Death Boys</label><input type="number" id="fDropDeathBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Death Girls</label><input type="number" id="fDropDeathGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Illness Boys</label><input type="number" id="fDropIllnessBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Illness Girls</label><input type="number" id="fDropIllnessGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Orphaned Boys</label><input type="number" id="fDropOrphanedBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Orphaned Girls</label><input type="number" id="fDropOrphanedGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Economic Boys</label><input type="number" id="fDropEconomicBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Economic Girls</label><input type="number" id="fDropEconomicGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>OVC Boys</label><input type="number" id="fDropOvcBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>OVC Girls</label><input type="number" id="fDropOvcGirls" value="0" min="0" /></div>
+                            </div>
+
+                            <div style="font-weight:500;font-size:14px;margin:12px 0 8px;color:#0f3b5e;">📊 Other Indicators</div>
+                            <div class="form-row-3">
+                                <div class="form-group"><label>Absenteeism Boys</label><input type="number" id="fAbsentBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Absenteeism Girls</label><input type="number" id="fAbsentGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Re-entry Boys</label><input type="number" id="fReentryBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Re-entry Girls</label><input type="number" id="fReentryGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>Re-admission Boys</label><input type="number" id="fReadmissionBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>Re-admission Girls</label><input type="number" id="fReadmissionGirls" value="0" min="0" /></div>
+                                <div class="form-group"><label>OVC Boys</label><input type="number" id="fOvcBoys" value="0" min="0" /></div>
+                                <div class="form-group"><label>OVC Girls</label><input type="number" id="fOvcGirls" value="0" min="0" /></div>
+                            </div>
+
+                            <div class="entry-actions mt-12">
+                                <button type="submit" class="btn btn-primary" id="entrySubmitBtn">💾 Save Entry</button>
+                                <button type="button" class="btn btn-outline" style="color:#1e293b;border-color:#d1d9e6;" onclick="resetEntryForm()">↺ Clear</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Existing entries -->
+                    <div class="mt-20">
+                        <div class="flex-between">
+                            <span style="font-weight:600;font-size:15px;">📋 Existing Entries</span>
+                            <span id="entryCount" style="font-size:13px;color:#64748b;">0 records</span>
+                        </div>
+                        <div class="table-scroll mt-12">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Grade</th>
+                                        <th>Boys</th>
+                                        <th>Girls</th>
+                                        <th>Total</th>
+                                        <th>Age</th>
+                                        <th>Teen Preg</th>
+                                        <th>Dropouts</th>
+                                        <th>Absent</th>
+                                        <th>Re-entry</th>
+                                        <th>OVC</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacherDataBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.container -->
+    </div><!-- /#appView -->
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+        // ================================================================
+        //  SUPABASE CONFIG  (Replace with your own keys)
+        // ================================================================
+        const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+
+        // For demo, we'll use a mock mode if keys are not set.
+        // In production, replace with real keys.
+        let supabase = null;
+        let useMock = false;
+
+        try {
+            if (SUPABASE_URL.includes('YOUR_PROJECT')) {
+                throw new Error('Using demo mode');
+            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (_) {
+            useMock = true;
+            console.warn('⚠️ Running in DEMO MODE (no Supabase). Data is stored in memory.');
+        }
+
+        // ================================================================
+        //  STATE
+        // ================================================================
+        let currentUser = null; // { id, email, role, school_id }
+        let schools = [];
+        let allRecords = [];
+        let currentSchoolId = null;
+
+        // Mock data store
+        let mockSchools = [
+            { id: '1', name: 'CHAMFUBU PRIMARY' },
+            { id: '2', name: 'CHANDA-WEYAYA PRIMARY' },
+            { id: '3', name: 'CHANDAMALI PRIMARY' },
+            { id: '4', name: 'CHANGALA PRIMARY' },
+            { id: '5', name: 'CHANUNDU PRIMARY' },
+            { id: '6', name: 'CHEWE PRIMARY' },
+        ];
+        let mockRecords = [
+            { id: 'r1', school_id: '1', grade: '1', enrolment_boys: 154, enrolment_girls: 153, age_range: '',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 1, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 1, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 1,
+                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                absenteeism_boys: 28, absenteeism_girls: 34, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 2, readmission_girls: 0, ovc_boys: 8, ovc_girls: 12 },
+            { id: 'r2', school_id: '5', grade: '1', enrolment_boys: 41, enrolment_girls: 44, age_range: '6–11',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 3, dropout_orphaned_girls: 2, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 12, dropout_ovc_girls: 11,
+                absenteeism_boys: 12, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+            { id: 'r3', school_id: '5', grade: '2', enrolment_boys: 40, enrolment_girls: 42, age_range: '8–13',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 4, dropout_orphaned_girls: 1, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 11, dropout_ovc_girls: 9,
+                absenteeism_boys: 8, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+            { id: 'r4', school_id: '6', grade: '1', enrolment_boys: 25, enrolment_girls: 15, age_range: '7–8',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 0, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                absenteeism_boys: 180, absenteeism_girls: 150, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+        ];
+
+        // ================================================================
+        //  DOM REFS
+        // ================================================================
+        const $ = id => document.getElementById(id);
+        const loginView = $('loginView');
+        const appView = $('appView');
+        const loginAlert = $('loginAlert');
+        const loginForm = $('loginForm');
+        const loginEmail = $('loginEmail');
+        const loginPassword = $('loginPassword');
+        const loginRole = $('loginRole');
+        const userBadge = $('userName');
+        const userRoleTag = $('userRoleTag');
+        const adminPanel = $('adminPanel');
+        const teacherPanel = $('teacherPanel');
+
+        // ================================================================
+        //  AUTH
+        // ================================================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+            const role = loginRole.value;
+
+            if (!email || !password) {
+                showLoginAlert('Please enter email and password.', 'error');
+                return;
+            }
+
+            // Demo login
+            if (useMock) {
+                // Accept any non-empty password for demo
+                const user = {
+                    id: 'user_' + Date.now(),
+                    email: email,
+                    role: role,
+                    school_id: role === 'teacher' ? '1' : null,
+                };
+                currentUser = user;
+                enterApp(user);
+                return;
+            }
+
+            // Real Supabase auth
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                // Fetch user profile from 'users' table
+                const { data: profile, error: pErr } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (pErr && pErr.code !== 'PGRST116') throw pErr;
+
+                const user = {
+                    id: data.user.id,
+                    email: data.user.email,
+                    role: profile?.role || role,
+                    school_id: profile?.school_id || null,
+                };
+                currentUser = user;
+                enterApp(user);
+            } catch (err) {
+                showLoginAlert('Login failed: ' + err.message, 'error');
+            }
+        }
+
+        function showLoginAlert(msg, type) {
+            loginAlert.className = 'alert alert-' + type;
+            loginAlert.textContent = msg;
+            loginAlert.classList.remove('hidden');
+        }
+
+        function enterApp(user) {
+            loginView.classList.add('hidden');
+            appView.classList.remove('hidden');
+            userBadge.textContent = user.email.split('@')[0] || 'User';
+            userRoleTag.textContent = user.role === 'admin' ? 'Admin' : 'Teacher';
+
+            if (user.role === 'admin') {
+                adminPanel.classList.remove('hidden');
+                teacherPanel.classList.add('hidden');
+                initAdmin();
+            } else {
+                adminPanel.classList.add('hidden');
+                teacherPanel.classList.remove('hidden');
+                initTeacher();
+            }
+        }
+
+        function handleLogout() {
+            if (!useMock && supabase) {
+                supabase.auth.signOut();
+            }
+            currentUser = null;
+            appView.classList.add('hidden');
+            loginView.classList.remove('hidden');
+            loginAlert.classList.add('hidden');
+            loginForm.reset();
+        }
+
+        // ================================================================
+        //  DATA HELPERS (Supabase or Mock)
+        // ================================================================
+        async function fetchSchools() {
+            if (useMock) return [...mockSchools];
+            const { data, error } = await supabase.from('schools').select('*').order('name');
+            if (error) throw error;
+            return data || [];
+        }
+
+        async function fetchRecords(schoolId = null) {
+            if (useMock) {
+                let recs = [...mockRecords];
+                if (schoolId) recs = recs.filter(r => r.school_id === schoolId);
+                return recs;
+            }
+            let query = supabase.from('school_data').select('*');
+            if (schoolId) query = query.eq('school_id', schoolId);
+            const { data, error } = await query.order('grade');
+            if (error) throw error;
+            return data || [];
+        }
+
+        async function saveRecord(record) {
+            if (useMock) {
+                if (record.id) {
+                    const idx = mockRecords.findIndex(r => r.id === record.id);
+                    if (idx >= 0) mockRecords[idx] = { ...mockRecords[idx], ...record };
+                    return record;
+                } else {
+                    const newRec = { ...record, id: 'r' + Date.now() };
+                    mockRecords.push(newRec);
+                    return newRec;
+                }
+            }
+            if (record.id) {
+                const { data, error } = await supabase
+                    .from('school_data')
+                    .update(record)
+                    .eq('id', record.id)
+                    .select()
+                    .single();
+                if (error) throw error;
+                return data;
+            } else {
+                const { data, error } = await supabase
+                    .from('school_data')
+                    .insert(record)
+                    .select()
+                    .single();
+                if (error) throw error;
+                return data;
+            }
+        }
+
+        async function deleteRecord(id) {
+            if (useMock) {
+                mockRecords = mockRecords.filter(r => r.id !== id);
+                return true;
+            }
+            const { error } = await supabase.from('school_data').delete().eq('id', id);
+            if (error) throw error;
+            return true;
+        }
+
+        async function addSchool(name) {
+            if (useMock) {
+                const newSchool = { id: 's' + Date.now(), name };
+                mockSchools.push(newSchool);
+                return newSchool;
+            }
+            const { data, error } = await supabase.from('schools').insert({ name }).select().single();
+            if (error) throw error;
+            return data;
+        }
+
+        // ================================================================
+        //  ADMIN
+        // ================================================================
+        let adminDataCache = [];
+
+        async function initAdmin() {
+            await loadAdminSchools();
+            await loadAdminData();
+            // Tab switching
+            document.querySelectorAll('.tab-bar .tab').forEach(tab => {
+                tab.onclick = () => {
+                    document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    const target = $('tab-' + tab.dataset.tab);
+                    if (target) target.classList.add('active');
+                    if (tab.dataset.tab === 'adminData') loadAdminData();
+                    if (tab.dataset.tab === 'adminDashboard') updateAdminStats();
+                };
+            });
+            updateAdminStats();
+        }
+
+        async function loadAdminSchools() {
+            schools = await fetchSchools();
+            const tbody = $('schoolListBody');
+            tbody.innerHTML = schools.map((s, i) =>
+                `<tr><td>${i+1}</td><td>${s.name}</td><td><button class="btn btn-danger btn-sm" onclick="removeSchool('${s.id}')">🗑</button></td></tr>`
+            ).join('');
+            // populate filter dropdown
+            const sel = $('adminFilterSchool');
+            const currentVal = sel.value;
+            sel.innerHTML = `<option value="">All Schools</option>` +
+                schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            sel.value = currentVal;
+        }
+
+        async function removeSchool(id) {
+            if (!confirm('Delete this school? All associated data will be removed.')) return;
+            if (useMock) {
+                mockSchools = mockSchools.filter(s => s.id !== id);
+                mockRecords = mockRecords.filter(r => r.school_id !== id);
+                await loadAdminSchools();
+                await loadAdminData();
+                updateAdminStats();
+                return;
+            }
+            // In real mode, cascade delete via RLS or handle manually
+            const { error } = await supabase.from('schools').delete().eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            await loadAdminSchools();
+            await loadAdminData();
+            updateAdminStats();
+        }
+
+        function showAddSchoolForm() {
+            const el = $('addSchoolForm');
+            el.classList.toggle('hidden');
+            if (!el.classList.contains('hidden')) $('newSchoolName').focus();
+        }
+
+        async function addSchool() {
+            const name = $('newSchoolName').value.trim();
+            if (!name) { alert('Please enter a school name.'); return; }
+            await addSchool(name);
+            $('newSchoolName').value = '';
+            $('addSchoolForm').classList.add('hidden');
+            await loadAdminSchools();
+            await loadAdminData();
+            updateAdminStats();
+        }
+
+        async function loadAdminData() {
+            const filterSchool = $('adminFilterSchool').value;
+            const records = await fetchRecords(filterSchool || null);
+            adminDataCache = records;
+
+            const tbody = $('adminDataBody');
+            if (records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="text-center text-muted" style="padding:30px;">No records found.</td></tr>`;
+                return;
+            }
+
+            // Build school name map
+            const schoolMap = {};
+            schools.forEach(s => schoolMap[s.id] = s.name);
+
+            tbody.innerHTML = records.map(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                const schoolName = schoolMap[r.school_id] || r.school_id;
+                return `<tr>
+                            <td><strong>${schoolName}</strong></td>
+                            <td>${r.grade || '-'}</td>
+                            <td>${r.enrolment_boys || 0}</td>
+                            <td>${r.enrolment_girls || 0}</td>
+                            <td><strong>${total}</strong></td>
+                            <td>${r.age_range || '-'}</td>
+                            <td>${r.teen_preg || 0}</td>
+                            <td>${dropouts}</td>
+                            <td>${absent}</td>
+                            <td>${reentry}</td>
+                            <td>${ovc}</td>
+                            <td><button class="btn btn-danger btn-sm" onclick="adminDeleteRecord('${r.id}')">🗑</button></td>
+                        </tr>`;
+            }).join('');
+            updateAdminStats();
+        }
+
+        async function adminDeleteRecord(id) {
+            if (!confirm('Delete this record?')) return;
+            await deleteRecord(id);
+            await loadAdminData();
+            updateAdminStats();
+        }
+
+        function updateAdminStats() {
+            const records = adminDataCache;
+            const schoolSet = new Set(records.map(r => r.school_id));
+            let totalEnrol = 0,
+                teenPreg = 0,
+                dropouts = 0,
+                absent = 0,
+                ovc = 0;
+            records.forEach(r => {
+                totalEnrol += (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                teenPreg += (r.teen_preg || 0);
+                dropouts += (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                absent += (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                ovc += (r.ovc_boys || 0) + (r.ovc_girls || 0);
+            });
+            $('statSchools').textContent = schoolSet.size || schools.length;
+            $('statTotalEnrol').textContent = totalEnrol;
+            $('statTeenPreg').textContent = teenPreg;
+            $('statDropouts').textContent = dropouts;
+            $('statAbsenteeism').textContent = absent;
+            $('statOVC').textContent = ovc;
+            $('lastUpdatedAdmin').textContent = 'Last updated: ' + new Date().toLocaleString();
+        }
+
+        // ================================================================
+        //  EXPORT
+        // ================================================================
+        function exportToExcel() {
+            const records = adminDataCache;
+            if (!records || records.length === 0) {
+                alert('No data to export.');
+                return;
+            }
+            const schoolMap = {};
+            schools.forEach(s => schoolMap[s.id] = s.name);
+
+            const rows = records.map(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                return {
+                    'School': schoolMap[r.school_id] || r.school_id,
+                    'Grade': r.grade || '',
+                    'Enrolment Boys': r.enrolment_boys || 0,
+                    'Enrolment Girls': r.enrolment_girls || 0,
+                    'Enrolment Total': total,
+                    'Age Range': r.age_range || '',
+                    'Teen Pregnancy (Girls)': r.teen_preg || 0,
+                    'Early Marriage Boys': r.early_marriage_boys || 0,
+                    'Early Marriage Girls': r.early_marriage_girls || 0,
+                    'Dropout Pregnancy Boys': r.dropout_preg_boys || 0,
+                    'Dropout Pregnancy Girls': r.dropout_preg_girls || 0,
+                    'Dropout Marriage Boys': r.dropout_marriage_boys || 0,
+                    'Dropout Marriage Girls': r.dropout_marriage_girls || 0,
+                    'Dropout Death Boys': r.dropout_death_boys || 0,
+                    'Dropout Death Girls': r.dropout_death_girls || 0,
+                    'Dropout Illness Boys': r.dropout_illness_boys || 0,
+                    'Dropout Illness Girls': r.dropout_illness_girls || 0,
+                    'Dropout Orphaned Boys': r.dropout_orphaned_boys || 0,
+                    'Dropout Orphaned Girls': r.dropout_orphaned_girls || 0,
+                    'Dropout Economic Boys': r.dropout_economic_boys || 0,
+                    'Dropout Economic Girls': r.dropout_economic_girls || 0,
+                    'Dropout OVC Boys': r.dropout_ovc_boys || 0,
+                    'Dropout OVC Girls': r.dropout_ovc_girls || 0,
+                    'Dropouts Total': dropouts,
+                    'Absenteeism Boys': r.absenteeism_boys || 0,
+                    'Absenteeism Girls': r.absenteeism_girls || 0,
+                    'Absenteeism Total': absent,
+                    'Re-entry Boys': r.reentry_boys || 0,
+                    'Re-entry Girls': r.reentry_girls || 0,
+                    'Re-entry Total': reentry,
+                    'Re-admission Boys': r.readmission_boys || 0,
+                    'Re-admission Girls': r.readmission_girls || 0,
+                    'OVC Boys': r.ovc_boys || 0,
+                    'OVC Girls': r.ovc_girls || 0,
+                    'OVC Total': ovc,
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, 'School Data');
+            XLSX.writeFile(wb, `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function exportToCSV() {
+            const records = adminDataCache;
+            if (!records || records.length === 0) { alert('No data to export.'); return; }
+            const schoolMap = {};
+            schools.forEach(s => schoolMap[s.id] = s.name);
+            let csv = 'School,Grade,Enrolment Boys,Enrolment Girls,Enrolment Total,Age Range,Teen Pregnancy,' +
+                'Dropouts Total,Absenteeism Total,Re-entry Total,OVC Total\n';
+            records.forEach(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                csv +=
+                    `"${schoolMap[r.school_id] || r.school_id}","${r.grade||''}",${r.enrolment_boys||0},${r.enrolment_girls||0},${total},"${r.age_range||''}",${r.teen_preg||0},${dropouts},${absent},${reentry},${ovc}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ================================================================
+        //  TEACHER
+        // ================================================================
+        let teacherRecords = [];
+        let teacherSchoolId = null;
+
+        async function initTeacher() {
+            // Find which school(s) this teacher belongs to
+            // In real mode, this would come from the user's profile.
+            // For demo, if teacher, we assign school_id = '1' (CHAMFUBU)
+            const schoolsList = await fetchSchools();
+            schools = schoolsList;
+
+            if (currentUser.school_id) {
+                teacherSchoolId = currentUser.school_id;
+            } else if (schoolsList.length > 0) {
+                teacherSchoolId = schoolsList[0].id;
+            }
+
+            // Populate school selector if multiple
+            const sel = $('teacherSchoolSelect');
+            sel.innerHTML = schoolsList.map(s =>
+                `<option value="${s.id}" ${s.id === teacherSchoolId ? 'selected' : ''}>${s.name}</option>`
+            ).join('');
+            if (schoolsList.length > 1) {
+                $('teacherSchoolSelector').classList.remove('hidden');
+                sel.onchange = () => {
+                    teacherSchoolId = sel.value;
+                    loadTeacherData();
+                    updateTeacherSchoolName();
+                };
+            } else {
+                $('teacherSchoolSelector').classList.add('hidden');
+            }
+
+            updateTeacherSchoolName();
+            await loadTeacherData();
+            resetEntryForm();
+        }
+
+        function updateTeacherSchoolName() {
+            const school = schools.find(s => s.id === teacherSchoolId);
+            $('teacherSchoolName').textContent = school ? '📌 ' + school.name : '';
+        }
+
+        async function loadTeacherData() {
+            if (!teacherSchoolId) return;
+            const records = await fetchRecords(teacherSchoolId);
+            teacherRecords = records;
+            renderTeacherData();
+            $('entryCount').textContent = records.length + ' records';
+        }
+
+        function renderTeacherData() {
+            const tbody = $('teacherDataBody');
+            if (teacherRecords.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="11" class="text-center text-muted" style="padding:24px;">No entries yet. Add one above.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = teacherRecords.map(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                return `<tr>
+                            <td><strong>${r.grade || '-'}</strong></td>
+                            <td>${r.enrolment_boys || 0}</td>
+                            <td>${r.enrolment_girls || 0}</td>
+                            <td><strong>${total}</strong></td>
+                            <td>${r.age_range || '-'}</td>
+                            <td>${r.teen_preg || 0}</td>
+                            <td>${dropouts}</td>
+                            <td>${absent}</td>
+                            <td>${reentry}</td>
+                            <td>${ovc}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editEntry('${r.id}')">✏️</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteEntry('${r.id}')">🗑</button>
+                            </td>
+                        </tr>`;
+            }).join('');
+        }
+
+        function resetEntryForm() {
+            $('editEntryId').value = '';
+            $('entryFormTitle').textContent = '➕ Add New Entry';
+            $('entrySubmitBtn').textContent = '💾 Save Entry';
+            document.querySelectorAll('#entryForm input[type="number"]').forEach(el => el.value = '0');
+            document.querySelectorAll('#entryForm input[type="text"]').forEach(el => el.value = '');
+            $('fGrade').value = '';
+            $('fAgeRange').value = '';
+        }
+
+        function editEntry(id) {
+            const r = teacherRecords.find(rec => rec.id === id);
+            if (!r) return;
+            $('editEntryId').value = r.id;
+            $('entryFormTitle').textContent = '✏️ Edit Entry';
+            $('entrySubmitBtn').textContent = '💾 Update Entry';
+
+            $('fGrade').value = r.grade || '';
+            $('fAgeRange').value = r.age_range || '';
+            $('fEnrolBoys').value = r.enrolment_boys || 0;
+            $('fEnrolGirls').value = r.enrolment_girls || 0;
+            $('fTeenPreg').value = r.teen_preg || 0;
+            $('fEarlyMarriageBoys').value = r.early_marriage_boys || 0;
+            $('fEarlyMarriageGirls').value = r.early_marriage_girls || 0;
+            $('fDropPregBoys').value = r.dropout_preg_boys || 0;
+            $('fDropPregGirls').value = r.dropout_preg_girls || 0;
+            $('fDropMarriageBoys').value = r.dropout_marriage_boys || 0;
+            $('fDropMarriageGirls').value = r.dropout_marriage_girls || 0;
+            $('fDropDeathBoys').value = r.dropout_death_boys || 0;
+            $('fDropDeathGirls').value = r.dropout_death_girls || 0;
+            $('fDropIllnessBoys').value = r.dropout_illness_boys || 0;
+            $('fDropIllnessGirls').value = r.dropout_illness_girls || 0;
+            $('fDropOrphanedBoys').value = r.dropout_orphaned_boys || 0;
+            $('fDropOrphanedGirls').value = r.dropout_orphaned_girls || 0;
+            $('fDropEconomicBoys').value = r.dropout_economic_boys || 0;
+            $('fDropEconomicGirls').value = r.dropout_economic_girls || 0;
+            $('fDropOvcBoys').value = r.dropout_ovc_boys || 0;
+            $('fDropOvcGirls').value = r.dropout_ovc_girls || 0;
+            $('fAbsentBoys').value = r.absenteeism_boys || 0;
+            $('fAbsentGirls').value = r.absenteeism_girls || 0;
+            $('fReentryBoys').value = r.reentry_boys || 0;
+            $('fReentryGirls').value = r.reentry_girls || 0;
+            $('fReadmissionBoys').value = r.readmission_boys || 0;
+            $('fReadmissionGirls').value = r.readmission_girls || 0;
+            $('fOvcBoys').value = r.ovc_boys || 0;
+            $('fOvcGirls').value = r.ovc_girls || 0;
+
+            $('entryForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function deleteEntry(id) {
+            if (!confirm('Delete this entry?')) return;
+            await deleteRecord(id);
+            await loadTeacherData();
+        }
+
+        async function saveEntry(e) {
+            e.preventDefault();
+            if (!teacherSchoolId) {
+                alert('No school selected. Please select a school first.');
+                return;
+            }
+
+            const grade = $('fGrade').value.trim();
+            if (!grade) { alert('Please enter a Grade.'); return; }
+
+            const payload = {
+                school_id: teacherSchoolId,
+                grade: grade,
+                age_range: $('fAgeRange').value.trim(),
+                enrolment_boys: parseInt($('fEnrolBoys').value) || 0,
+                enrolment_girls: parseInt($('fEnrolGirls').value) || 0,
+                teen_preg: parseInt($('fTeenPreg').value) || 0,
+                early_marriage_boys: parseInt($('fEarlyMarriageBoys').value) || 0,
+                early_marriage_girls: parseInt($('fEarlyMarriageGirls').value) || 0,
+                dropout_preg_boys: parseInt($('fDropPregBoys').value) || 0,
+                dropout_preg_girls: parseInt($('fDropPregGirls').value) || 0,
+                dropout_marriage_boys: parseInt($('fDropMarriageBoys').value) || 0,
+                dropout_marriage_girls: parseInt($('fDropMarriageGirls').value) || 0,
+                dropout_death_boys: parseInt($('fDropDeathBoys').value) || 0,
+                dropout_death_girls: parseInt($('fDropDeathGirls').value) || 0,
+                dropout_illness_boys: parseInt($('fDropIllnessBoys').value) || 0,
+                dropout_illness_girls: parseInt($('fDropIllnessGirls').value) || 0,
+                dropout_orphaned_boys: parseInt($('fDropOrphanedBoys').value) || 0,
+                dropout_orphaned_girls: parseInt($('fDropOrphanedGirls').value) || 0,
+                dropout_economic_boys: parseInt($('fDropEconomicBoys').value) || 0,
+                dropout_economic_girls: parseInt($('fDropEconomicGirls').value) || 0,
+                dropout_ovc_boys: parseInt($('fDropOvcBoys').value) || 0,
+                dropout_ovc_girls: parseInt($('fDropOvcGirls').value) || 0,
+                absenteeism_boys: parseInt($('fAbsentBoys').value) || 0,
+                absenteeism_girls: parseInt($('fAbsentGirls').value) || 0,
+                reentry_boys: parseInt($('fReentryBoys').value) || 0,
+                reentry_girls: parseInt($('fReentryGirls').value) || 0,
+                readmission_boys: parseInt($('fReadmissionBoys').value) || 0,
+                readmission_girls: parseInt($('fReadmissionGirls').value) || 0,
+                ovc_boys: parseInt($('fOvcBoys').value) || 0,
+                ovc_girls: parseInt($('fOvcGirls').value) || 0,
+            };
+
+            const editId = $('editEntryId').value;
+            if (editId) payload.id = editId;
+
+            try {
+                await saveRecord(payload);
+                resetEntryForm();
+                await loadTeacherData();
+                // If admin is viewing, refresh admin data too
+                if (currentUser.role === 'admin') {
+                    await loadAdminData();
+                    updateAdminStats();
+                }
+            } catch (err) {
+                alert('Error saving: ' + err.message);
+            }
+        }
+
+        // ================================================================
+        //  AUTO-CALCULATE totals on input (optional)
+        // ================================================================
+        document.querySelectorAll('#entryForm input[type="number"]').forEach(el => {
+            el.addEventListener('input', () => {
+                // Simple: ensure non-negative
+                if (parseInt(el.value) < 0) el.value = 0;
+            });
+        });
+
+        // ================================================================
+        //  BOOT
+        // ================================================================
+        // Check if already logged in via Supabase session
+        (async function boot() {
+            if (!useMock && supabase) {
+                const { data } = await supabase.auth.getSession();
+                if (data?.session) {
+                    // Fetch profile and auto-login
+                    const { data: profile } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', data.session.user.id)
+                        .single();
+                    currentUser = {
+                        id: data.session.user.id,
+                        email: data.session.user.email,
+                        role: profile?.role || 'teacher',
+                        school_id: profile?.school_id || null,
+                    };
+                    enterApp(currentUser);
+                    return;
+                }
+            }
+            // Show login by default
+            loginView.classList.remove('hidden');
+            appView.classList.add('hidden');
+        })();
+
+        console.log('📊 Mungwi District School Data System loaded.');
+        console.log('ℹ️  Mode:', useMock ? 'DEMO (in-memory)' : 'Supabase');
+        console.log('ℹ️  Demo login: any email/password, select role.');
+    </script>
+</body>
+</html>
