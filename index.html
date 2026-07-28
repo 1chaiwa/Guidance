@@ -7,6 +7,9 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    </script>
     <!-- SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
@@ -618,6 +621,9 @@
                 <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="loadData()">
                     <i class="fas fa-sync"></i>
                 </button>
+                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="syncWithSupabase()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </button>
             </div>
         </header>
 
@@ -634,7 +640,7 @@
                     <div class="card">
                         <div class="card-title">
                             <i class="fas fa-chart-simple"></i> District Summary
-                            <span class="badge" id="lastUpdatedAdmin">updated</span>
+                            <span class="badge" id="lastUpdatedAdmin">loading...</span>
                         </div>
                         <div id="adminStats" class="stat-grid">
                             <div class="stat-box"><span class="icon"><i class="fas fa-school"></i></span><div class="num" id="statSchools">-</div><div class="label">Schools</div></div>
@@ -799,58 +805,14 @@
 
     <script>
         // ================================================================
-        //  LOCAL DATA STORAGE (No Supabase - Works Immediately)
+        //  SUPABASE CONFIG
         // ================================================================
+        const SUPABASE_URL = 'https://vnkqhwqolwxoxfwrqqaj.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZua3Fod3FvbHd4b3hmd3JxcWFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNTA5MjcsImV4cCI6MjEwMDgyNjkyN30.KcNuU2QSpkYKJh8PkNtjKgPCeK13KJNGgXlJZLaY8W8';
 
-        // Sample data
-        let schools = [
-            { id: '1', name: 'CHAMFUBU PRIMARY' },
-            { id: '2', name: 'CHANDA-WEYAYA PRIMARY' },
-            { id: '3', name: 'CHANDAMALI PRIMARY' },
-            { id: '4', name: 'CHANGALA PRIMARY' },
-            { id: '5', name: 'CHANUNDU PRIMARY' },
-            { id: '6', name: 'CHEWE PRIMARY' },
-            { id: '7', name: 'CHIBILE PRIMARY' },
-            { id: '8', name: 'CHIFULO PRIMARY' },
-            { id: '9', name: 'CHIKULU PRIMARY' },
-            { id: '10', name: 'CHILAILA PRIMARY' },
-        ];
-
-        let records = [
-            { id: 'r1', school_id: '1', grade: '1', enrolment_boys: 154, enrolment_girls: 153, age_range: '6-11',
-                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
-                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
-                dropout_death_boys: 0, dropout_death_girls: 1, dropout_illness_boys: 0, dropout_illness_girls: 0,
-                dropout_orphaned_boys: 1, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 1,
-                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
-                absenteeism_boys: 28, absenteeism_girls: 34, reentry_boys: 0, reentry_girls: 0,
-                readmission_boys: 2, readmission_girls: 0, ovc_boys: 8, ovc_girls: 12 },
-            { id: 'r2', school_id: '5', grade: '1', enrolment_boys: 41, enrolment_girls: 44, age_range: '6–11',
-                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
-                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
-                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
-                dropout_orphaned_boys: 3, dropout_orphaned_girls: 2, dropout_economic_boys: 0, dropout_economic_girls: 0,
-                dropout_ovc_boys: 12, dropout_ovc_girls: 11,
-                absenteeism_boys: 12, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
-                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
-            { id: 'r3', school_id: '5', grade: '2', enrolment_boys: 40, enrolment_girls: 42, age_range: '8–13',
-                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
-                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
-                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
-                dropout_orphaned_boys: 4, dropout_orphaned_girls: 1, dropout_economic_boys: 0, dropout_economic_girls: 0,
-                dropout_ovc_boys: 11, dropout_ovc_girls: 9,
-                absenteeism_boys: 8, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
-                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
-            { id: 'r4', school_id: '6', grade: '1', enrolment_boys: 25, enrolment_girls: 15, age_range: '7–8',
-                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
-                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
-                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
-                dropout_orphaned_boys: 0, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 0,
-                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
-                absenteeism_boys: 180, absenteeism_girls: 150, reentry_boys: 0, reentry_girls: 0,
-                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
-        ];
-
+        let supabase = null;
+        let schools = [];
+        let records = [];
         let teacherRecords = [];
         let teacherSchoolId = null;
         let adminDataCache = [];
@@ -859,8 +821,17 @@
         //  DOM REFS
         // ================================================================
         const $ = id => document.getElementById(id);
-        const adminPanel = $('adminPanel');
-        const teacherPanel = $('teacherPanel');
+
+        // ================================================================
+        //  INIT SUPABASE
+        // ================================================================
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase initialized');
+        } catch (e) {
+            console.warn('⚠️ Supabase not available, using localStorage fallback.');
+            supabase = null;
+        }
 
         // ================================================================
         //  TOAST NOTIFICATION
@@ -891,20 +862,191 @@
         });
 
         // ================================================================
-        //  DATA FUNCTIONS
+        //  LOAD DATA FROM SUPABASE
         // ================================================================
-        function loadData() {
-            const filterSchool = $('adminFilterSchool');
-            const filterVal = filterSchool ? filterSchool.value : '';
-            let filteredRecords = records;
-            if (filterVal) {
-                filteredRecords = records.filter(r => r.school_id === filterVal);
+        async function loadData() {
+            try {
+                // Load schools
+                let schoolsData = [];
+                if (supabase) {
+                    const { data, error } = await supabase
+                        .from('schools')
+                        .select('*')
+                        .order('name');
+                    if (!error && data) {
+                        schoolsData = data;
+                    } else {
+                        console.warn('Supabase schools error, using localStorage:', error);
+                        schoolsData = JSON.parse(localStorage.getItem('schools') || '[]');
+                    }
+                } else {
+                    schoolsData = JSON.parse(localStorage.getItem('schools') || '[]');
+                }
+                schools = schoolsData;
+
+                // Load records
+                let recordsData = [];
+                if (supabase) {
+                    const { data, error } = await supabase
+                        .from('records')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    if (!error && data) {
+                        recordsData = data;
+                    } else {
+                        console.warn('Supabase records error, using localStorage:', error);
+                        recordsData = JSON.parse(localStorage.getItem('records') || '[]');
+                    }
+                } else {
+                    recordsData = JSON.parse(localStorage.getItem('records') || '[]');
+                }
+                records = recordsData;
+
+                // If no data in Supabase, seed with sample data
+                if (records.length === 0 && schools.length === 0) {
+                    await seedSampleData();
+                    return;
+                }
+
+                // Update UI
+                const filterSchool = $('adminFilterSchool');
+                const filterVal = filterSchool ? filterSchool.value : '';
+                let filteredRecords = records;
+                if (filterVal) {
+                    filteredRecords = records.filter(r => r.school_id === filterVal);
+                }
+                adminDataCache = filteredRecords;
+                renderAdminData();
+                updateStats();
+                loadSchools();
+                loadTeacherSelector();
+                $('lastUpdatedAdmin').textContent = new Date().toLocaleTimeString();
+
+                showToast('✅ Data loaded from Supabase!', 'success');
+            } catch (err) {
+                console.error('Load error:', err);
+                showToast('Error loading data: ' + err.message, 'error');
             }
-            adminDataCache = filteredRecords;
-            renderAdminData();
-            updateStats();
         }
 
+        // ================================================================
+        //  SEED SAMPLE DATA
+        // ================================================================
+        async function seedSampleData() {
+            showToast('📦 Seeding sample data...', 'info');
+
+            const sampleSchools = [
+                { id: 's1', name: 'CHAMFUBU PRIMARY' },
+                { id: 's2', name: 'CHANDA-WEYAYA PRIMARY' },
+                { id: 's3', name: 'CHANDAMALI PRIMARY' },
+                { id: 's4', name: 'CHANGALA PRIMARY' },
+                { id: 's5', name: 'CHANUNDU PRIMARY' },
+                { id: 's6', name: 'CHEWE PRIMARY' },
+                { id: 's7', name: 'CHIBILE PRIMARY' },
+                { id: 's8', name: 'CHIFULO PRIMARY' },
+                { id: 's9', name: 'CHIKULU PRIMARY' },
+                { id: 's10', name: 'CHILAILA PRIMARY' },
+            ];
+
+            const sampleRecords = [
+                { id: 'r1', school_id: 's1', grade: '1', enrolment_boys: 154, enrolment_girls: 153, age_range: '6-11',
+                    teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                    dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                    dropout_death_boys: 0, dropout_death_girls: 1, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                    dropout_orphaned_boys: 1, dropout_orphaned_girls: 0, dropout_economic_boys: 0,
+                    dropout_economic_girls: 1,
+                    dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                    absenteeism_boys: 28, absenteeism_girls: 34, reentry_boys: 0, reentry_girls: 0,
+                    readmission_boys: 2, readmission_girls: 0, ovc_boys: 8, ovc_girls: 12 },
+                { id: 'r2', school_id: 's5', grade: '1', enrolment_boys: 41, enrolment_girls: 44, age_range: '6–11',
+                    teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                    dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                    dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                    dropout_orphaned_boys: 3, dropout_orphaned_girls: 2, dropout_economic_boys: 0,
+                    dropout_economic_girls: 0,
+                    dropout_ovc_boys: 12, dropout_ovc_girls: 11,
+                    absenteeism_boys: 12, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                    readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+                { id: 'r3', school_id: 's5', grade: '2', enrolment_boys: 40, enrolment_girls: 42, age_range: '8–13',
+                    teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                    dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                    dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                    dropout_orphaned_boys: 4, dropout_orphaned_girls: 1, dropout_economic_boys: 0,
+                    dropout_economic_girls: 0,
+                    dropout_ovc_boys: 11, dropout_ovc_girls: 9,
+                    absenteeism_boys: 8, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                    readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+                { id: 'r4', school_id: 's6', grade: '1', enrolment_boys: 25, enrolment_girls: 15, age_range: '7–8',
+                    teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                    dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                    dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                    dropout_orphaned_boys: 0, dropout_orphaned_girls: 0, dropout_economic_boys: 0,
+                    dropout_economic_girls: 0,
+                    dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                    absenteeism_boys: 180, absenteeism_girls: 150, reentry_boys: 0, reentry_girls: 0,
+                    readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+            ];
+
+            // Save to Supabase
+            if (supabase) {
+                try {
+                    // Insert schools
+                    for (const s of sampleSchools) {
+                        await supabase.from('schools').upsert(s, { onConflict: 'id' });
+                    }
+                    // Insert records
+                    for (const r of sampleRecords) {
+                        await supabase.from('records').upsert(r, { onConflict: 'id' });
+                    }
+                    showToast('✅ Sample data seeded to Supabase!', 'success');
+                } catch (e) {
+                    console.warn('Supabase seed error, using localStorage:', e);
+                    localStorage.setItem('schools', JSON.stringify(sampleSchools));
+                    localStorage.setItem('records', JSON.stringify(sampleRecords));
+                    showToast('📦 Sample data saved locally.', 'info');
+                }
+            } else {
+                localStorage.setItem('schools', JSON.stringify(sampleSchools));
+                localStorage.setItem('records', JSON.stringify(sampleRecords));
+                showToast('📦 Sample data saved locally.', 'info');
+            }
+
+            // Reload
+            await loadData();
+        }
+
+        // ================================================================
+        //  SYNC WITH SUPABASE
+        // ================================================================
+        async function syncWithSupabase() {
+            if (!supabase) {
+                showToast('⚠️ Supabase not available. Check your connection.', 'error');
+                return;
+            }
+
+            showToast('🔄 Syncing with Supabase...', 'info');
+
+            try {
+                // Upload schools
+                for (const s of schools) {
+                    await supabase.from('schools').upsert(s, { onConflict: 'id' });
+                }
+
+                // Upload records
+                for (const r of records) {
+                    await supabase.from('records').upsert(r, { onConflict: 'id' });
+                }
+
+                showToast('✅ Data synced to Supabase!', 'success');
+            } catch (err) {
+                showToast('❌ Sync failed: ' + err.message, 'error');
+                console.error('Sync error:', err);
+            }
+        }
+
+        // ================================================================
+        //  RENDER FUNCTIONS
+        // ================================================================
         function renderAdminData() {
             const tbody = $('adminDataBody');
             if (!tbody) return;
@@ -974,12 +1116,8 @@
             $('statDropouts').textContent = dropouts;
             $('statAbsenteeism').textContent = absent;
             $('statOVC').textContent = ovc;
-            $('lastUpdatedAdmin').textContent = new Date().toLocaleTimeString();
         }
 
-        // ================================================================
-        //  SCHOOL MANAGEMENT
-        // ================================================================
         function loadSchools() {
             const tbody = $('schoolListBody');
             if (!tbody) return;
@@ -997,145 +1135,19 @@
             }
         }
 
-        function showAddSchoolForm() {
-            const el = $('addSchoolForm');
-            if (el) el.classList.toggle('hidden');
-            if (el && !el.classList.contains('hidden')) {
-                $('newSchoolName').focus();
-            }
-        }
-
-        function addSchool() {
-            const input = $('newSchoolName');
-            if (!input) return;
-            const name = input.value.trim();
-            if (!name) { showToast('Please enter a school name.', 'error'); return; }
-            const newSchool = { id: 's' + Date.now(), name: name };
-            schools.push(newSchool);
-            input.value = '';
-            $('addSchoolForm').classList.add('hidden');
-            loadSchools();
-            loadData();
-            showToast('School added!', 'success');
-        }
-
-        function deleteSchool(id) {
-            if (!confirm('Delete this school? All associated data will be removed.')) return;
-            schools = schools.filter(s => s.id !== id);
-            records = records.filter(r => r.school_id !== id);
-            loadSchools();
-            loadData();
-            showToast('School deleted!', 'success');
-        }
-
-        // ================================================================
-        //  RECORD MANAGEMENT
-        // ================================================================
-        function deleteRecord(id) {
-            if (!confirm('Delete this record?')) return;
-            records = records.filter(r => r.id !== id);
-            loadData();
-            showToast('Record deleted!', 'success');
-        }
-
-        // ================================================================
-        //  EXPORT
-        // ================================================================
-        function exportToExcel() {
-            if (adminDataCache.length === 0) {
-                showToast('No data to export.', 'error');
-                return;
-            }
-            const schoolMap = {};
-            schools.forEach(s => schoolMap[s.id] = s.name);
-
-            const rows = adminDataCache.map(r => {
-                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
-                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
-                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
-                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
-                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
-                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
-                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
-                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
-                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
-                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
-                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
-                return {
-                    'School': schoolMap[r.school_id] || r.school_id,
-                    'Grade': r.grade || '',
-                    'Enrolment Boys': r.enrolment_boys || 0,
-                    'Enrolment Girls': r.enrolment_girls || 0,
-                    'Enrolment Total': total,
-                    'Age Range': r.age_range || '',
-                    'Teen Pregnancy': r.teen_preg || 0,
-                    'Dropouts Total': dropouts,
-                    'Absenteeism Total': absent,
-                    'Re-entry Total': reentry,
-                    'OVC Total': ovc,
-                };
-            });
-
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(rows);
-            XLSX.utils.book_append_sheet(wb, ws, 'School Data');
-            XLSX.writeFile(wb, `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.xlsx`);
-            showToast('Export successful!', 'success');
-        }
-
-        function exportToCSV() {
-            if (adminDataCache.length === 0) {
-                showToast('No data to export.', 'error');
-                return;
-            }
-            const schoolMap = {};
-            schools.forEach(s => schoolMap[s.id] = s.name);
-            let csv = 'School,Grade,Enrolment Boys,Enrolment Girls,Enrolment Total,Age Range,Teen Pregnancy,' +
-                'Dropouts Total,Absenteeism Total,Re-entry Total,OVC Total\n';
-            adminDataCache.forEach(r => {
-                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
-                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
-                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
-                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
-                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
-                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
-                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
-                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
-                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
-                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
-                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
-                csv +=
-                    `"${schoolMap[r.school_id] || r.school_id}","${r.grade||''}",${r.enrolment_boys||0},${r.enrolment_girls||0},${total},"${r.age_range||''}",${r.teen_preg||0},${dropouts},${absent},${reentry},${ovc}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Export successful!', 'success');
-        }
-
-        // ================================================================
-        //  TEACHER FUNCTIONS
-        // ================================================================
-        function initTeacher() {
-            if (schools.length > 0) {
-                teacherSchoolId = schools[0].id;
-            }
+        function loadTeacherSelector() {
             const sel = $('teacherSchoolSelect');
             if (sel) {
                 sel.innerHTML = schools.map(s =>
-                    `<option value="${s.id}" ${s.id === teacherSchoolId ? 'selected' : ''}>${s.name}</option>`
+                    `<option value="${s.id}">${s.name}</option>`
                 ).join('');
-                if (schools.length > 1) {
+                if (schools.length > 0) {
+                    teacherSchoolId = schools[0].id;
                     $('teacherSchoolSelector').classList.remove('hidden');
+                    loadTeacherData();
+                    updateTeacherSchoolName();
                 }
             }
-            updateTeacherSchoolName();
-            loadTeacherData();
-            resetEntryForm();
         }
 
         function updateTeacherSchoolName() {
@@ -1189,6 +1201,84 @@
             }).join('');
         }
 
+        // ================================================================
+        //  SCHOOL MANAGEMENT
+        // ================================================================
+        function showAddSchoolForm() {
+            const el = $('addSchoolForm');
+            if (el) el.classList.toggle('hidden');
+            if (el && !el.classList.contains('hidden')) {
+                $('newSchoolName').focus();
+            }
+        }
+
+        async function addSchool() {
+            const input = $('newSchoolName');
+            if (!input) return;
+            const name = input.value.trim();
+            if (!name) { showToast('Please enter a school name.', 'error'); return; }
+            const newSchool = { id: 's' + Date.now(), name: name };
+
+            try {
+                if (supabase) {
+                    const { error } = await supabase.from('schools').insert([newSchool]);
+                    if (error) throw new Error(error.message);
+                }
+                schools.push(newSchool);
+                localStorage.setItem('schools', JSON.stringify(schools));
+
+                input.value = '';
+                $('addSchoolForm').classList.add('hidden');
+                loadSchools();
+                loadData();
+                showToast('✅ School added!', 'success');
+            } catch (err) {
+                showToast('❌ Failed to add: ' + err.message, 'error');
+            }
+        }
+
+        async function deleteSchool(id) {
+            if (!confirm('Delete this school? All associated data will be removed.')) return;
+            try {
+                if (supabase) {
+                    const { error } = await supabase.from('schools').delete().eq('id', id);
+                    if (error) throw new Error(error.message);
+                }
+                schools = schools.filter(s => s.id !== id);
+                records = records.filter(r => r.school_id !== id);
+                localStorage.setItem('schools', JSON.stringify(schools));
+                localStorage.setItem('records', JSON.stringify(records));
+
+                loadSchools();
+                loadData();
+                showToast('✅ School deleted!', 'success');
+            } catch (err) {
+                showToast('❌ Failed to delete: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        //  RECORD MANAGEMENT
+        // ================================================================
+        async function deleteRecord(id) {
+            if (!confirm('Delete this record?')) return;
+            try {
+                if (supabase) {
+                    const { error } = await supabase.from('records').delete().eq('id', id);
+                    if (error) throw new Error(error.message);
+                }
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('records', JSON.stringify(records));
+                loadData();
+                showToast('✅ Record deleted!', 'success');
+            } catch (err) {
+                showToast('❌ Failed to delete: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        //  ENTRY FORM
+        // ================================================================
         function resetEntryForm() {
             $('editEntryId').value = '';
             $('entryFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry';
@@ -1239,15 +1329,24 @@
             $('entryForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function deleteTeacherRecord(id) {
+        async function deleteTeacherRecord(id) {
             if (!confirm('Delete this entry?')) return;
-            records = records.filter(r => r.id !== id);
-            loadTeacherData();
-            loadData();
-            showToast('Record deleted!', 'success');
+            try {
+                if (supabase) {
+                    const { error } = await supabase.from('records').delete().eq('id', id);
+                    if (error) throw new Error(error.message);
+                }
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('records', JSON.stringify(records));
+                loadTeacherData();
+                loadData();
+                showToast('✅ Record deleted!', 'success');
+            } catch (err) {
+                showToast('❌ Failed to delete: ' + err.message, 'error');
+            }
         }
 
-        function saveEntry(e) {
+        async function saveEntry(e) {
             e.preventDefault();
             if (!teacherSchoolId) {
                 showToast('No school selected.', 'error');
@@ -1290,43 +1389,134 @@
                 readmission_girls: parseInt($('fReadmissionGirls').value) || 0,
                 ovc_boys: parseInt($('fOvcBoys').value) || 0,
                 ovc_girls: parseInt($('fOvcGirls').value) || 0,
+                created_at: new Date().toISOString()
             };
 
             const editId = $('editEntryId').value;
-            if (editId) {
-                payload.id = editId;
-                const idx = records.findIndex(r => r.id === editId);
-                if (idx >= 0) records[idx] = { ...records[idx], ...payload };
-                showToast('Record updated!', 'success');
-            } else {
-                payload.id = 'r' + Date.now();
-                records.push(payload);
-                showToast('Record saved!', 'success');
-            }
 
-            resetEntryForm();
-            loadTeacherData();
-            loadData();
+            try {
+                if (editId) {
+                    payload.id = editId;
+                    if (supabase) {
+                        const { error } = await supabase.from('records').update(payload).eq('id', editId);
+                        if (error) throw new Error(error.message);
+                    }
+                    const idx = records.findIndex(r => r.id === editId);
+                    if (idx >= 0) records[idx] = { ...records[idx], ...payload };
+                    showToast('✅ Record updated!', 'success');
+                } else {
+                    payload.id = 'r' + Date.now();
+                    if (supabase) {
+                        const { error } = await supabase.from('records').insert([payload]);
+                        if (error) throw new Error(error.message);
+                    }
+                    records.push(payload);
+                    showToast('✅ Record saved!', 'success');
+                }
+
+                localStorage.setItem('records', JSON.stringify(records));
+                resetEntryForm();
+                loadTeacherData();
+                loadData();
+            } catch (err) {
+                showToast('❌ Failed to save: ' + err.message, 'error');
+                console.error('Save error:', err);
+            }
+        }
+
+        // ================================================================
+        //  EXPORT FUNCTIONS
+        // ================================================================
+        function exportToExcel() {
+            if (adminDataCache.length === 0) {
+                showToast('No data to export.', 'error');
+                return;
+            }
+            const schoolMap = {};
+            schools.forEach(s => schoolMap[s.id] = s.name);
+
+            const rows = adminDataCache.map(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                return {
+                    'School': schoolMap[r.school_id] || r.school_id,
+                    'Grade': r.grade || '',
+                    'Enrolment Boys': r.enrolment_boys || 0,
+                    'Enrolment Girls': r.enrolment_girls || 0,
+                    'Enrolment Total': total,
+                    'Age Range': r.age_range || '',
+                    'Teen Pregnancy': r.teen_preg || 0,
+                    'Dropouts Total': dropouts,
+                    'Absenteeism Total': absent,
+                    'Re-entry Total': reentry,
+                    'OVC Total': ovc,
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, 'School Data');
+            XLSX.writeFile(wb, `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast('✅ Export successful!', 'success');
+        }
+
+        function exportToCSV() {
+            if (adminDataCache.length === 0) {
+                showToast('No data to export.', 'error');
+                return;
+            }
+            const schoolMap = {};
+            schools.forEach(s => schoolMap[s.id] = s.name);
+            let csv = 'School,Grade,Enrolment Boys,Enrolment Girls,Enrolment Total,Age Range,Teen Pregnancy,' +
+                'Dropouts Total,Absenteeism Total,Re-entry Total,OVC Total\n';
+            adminDataCache.forEach(r => {
+                const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
+                const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
+                    (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
+                    (r.dropout_death_boys || 0) + (r.dropout_death_girls || 0) +
+                    (r.dropout_illness_boys || 0) + (r.dropout_illness_girls || 0) +
+                    (r.dropout_orphaned_boys || 0) + (r.dropout_orphaned_girls || 0) +
+                    (r.dropout_economic_boys || 0) + (r.dropout_economic_girls || 0) +
+                    (r.dropout_ovc_boys || 0) + (r.dropout_ovc_girls || 0);
+                const absent = (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
+                const reentry = (r.reentry_boys || 0) + (r.reentry_girls || 0);
+                const ovc = (r.ovc_boys || 0) + (r.ovc_girls || 0);
+                csv +=
+                    `"${schoolMap[r.school_id] || r.school_id}","${r.grade||''}",${r.enrolment_boys||0},${r.enrolment_girls||0},${total},"${r.age_range||''}",${r.teen_preg||0},${dropouts},${absent},${reentry},${ovc}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Mungwi_Term2_2025_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Export successful!', 'success');
         }
 
         // ================================================================
         //  BOOT
         // ================================================================
-        function init() {
-            // Show admin panel by default
-            adminPanel.classList.remove('hidden');
-            teacherPanel.classList.add('hidden');
+        async function init() {
+            // Show admin panel
+            document.getElementById('adminPanel').classList.remove('hidden');
+            document.getElementById('teacherPanel').classList.add('hidden');
 
-            // Load data
-            loadSchools();
-            loadData();
+            // Load data from Supabase
+            await loadData();
 
             // Set teacher school selector
             const teacherSelect = $('teacherSchoolSelect');
             if (teacherSelect) {
-                teacherSelect.innerHTML = schools.map(s =>
-                    `<option value="${s.id}">${s.name}</option>`
-                ).join('');
                 teacherSelect.onchange = function() {
                     teacherSchoolId = this.value;
                     loadTeacherData();
@@ -1335,8 +1525,8 @@
             }
 
             console.log('📊 Mungwi District School Data System loaded.');
-            console.log('✅ Using local data storage (no Supabase required)');
-            showToast('System ready!', 'success');
+            console.log('✅ Connected to Supabase:', supabase ? 'Yes' : 'No (using localStorage)');
+            showToast('✅ System ready!', 'success');
         }
 
         // Start the app
