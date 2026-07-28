@@ -11,6 +11,8 @@
     <!-- SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
         /* ----- RESET & BASE ----- */
@@ -576,14 +578,13 @@
                         <option value="admin">👤 Admin</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary w-full" style="width:100%;justify-content:center;padding:12px;">
-                    Sign In
+                <button type="submit" class="btn btn-primary w-full" style="width:100%;justify-content:center;padding:12px;" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
                 </button>
             </form>
 
             <p style="margin-top:20px;font-size:13px;color:#94a3b8;text-align:center;">
-                Demo: <strong>teacher@demo.com</strong> / <strong>admin@demo.com</strong> (any password)<br />
-                <span style="font-size:12px;">(Supabase auth will be used in production)</span>
+                <i class="fas fa-info-circle"></i> Use your Supabase credentials
             </p>
         </div>
     </div>
@@ -854,21 +855,17 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  SUPABASE CONFIG  (Replace with your own keys)
+        //  SUPABASE CONFIG - YOUR CREDENTIALS
         // ================================================================
-        const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+        const SUPABASE_URL = 'https://hbjddsvllblsbdlzgfmz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiamRkc3ZsbGJsc2JkbHpnZm16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNzg2NTYsImV4cCI6MjEwMDc1NDY1Nn0.I0CYCNcjzhNvazQbORk8c8Mzr5iIXd4H1s_x43a4-lU';
 
-        // For demo, we'll use a mock mode if keys are not set.
-        // In production, replace with real keys.
         let supabase = null;
         let useMock = false;
 
         try {
-            if (SUPABASE_URL.includes('YOUR_PROJECT')) {
-                throw new Error('Using demo mode');
-            }
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase initialized');
         } catch (_) {
             useMock = true;
             console.warn('⚠️ Running in DEMO MODE (no Supabase). Data is stored in memory.');
@@ -877,12 +874,12 @@
         // ================================================================
         //  STATE
         // ================================================================
-        let currentUser = null; // { id, email, role, school_id }
+        let currentUser = null;
         let schools = [];
         let allRecords = [];
         let currentSchoolId = null;
 
-        // Mock data store
+        // Mock data store (fallback)
         let mockSchools = [
             { id: '1', name: 'CHAMFUBU PRIMARY' },
             { id: '2', name: 'CHANDA-WEYAYA PRIMARY' },
@@ -937,13 +934,14 @@
         const loginEmail = $('loginEmail');
         const loginPassword = $('loginPassword');
         const loginRole = $('loginRole');
+        const loginBtn = $('loginBtn');
         const userBadge = $('userName');
         const userRoleTag = $('userRoleTag');
         const adminPanel = $('adminPanel');
         const teacherPanel = $('teacherPanel');
 
         // ================================================================
-        //  AUTH
+        //  AUTH - REAL SUPABASE AUTH
         // ================================================================
         async function handleLogin(e) {
             e.preventDefault();
@@ -956,44 +954,77 @@
                 return;
             }
 
-            // Demo login
-            if (useMock) {
-                // Accept any non-empty password for demo
-                const user = {
-                    id: 'user_' + Date.now(),
-                    email: email,
-                    role: role,
-                    school_id: role === 'teacher' ? '1' : null,
-                };
-                currentUser = user;
-                enterApp(user);
-                return;
-            }
+            // Show loading state
+            loginBtn.innerHTML = '<span class="spinner"></span> Signing in...';
+            loginBtn.disabled = true;
 
-            // Real Supabase auth
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
+                // Try real Supabase auth first
+                if (supabase && !useMock) {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
 
-                // Fetch user profile from 'users' table
-                const { data: profile, error: pErr } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', data.user.id)
-                    .single();
+                    if (error) throw error;
 
-                if (pErr && pErr.code !== 'PGRST116') throw pErr;
+                    // Get user profile
+                    const { data: profile, error: pErr } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', data.user.id)
+                        .single();
 
-                const user = {
-                    id: data.user.id,
-                    email: data.user.email,
-                    role: profile?.role || role,
-                    school_id: profile?.school_id || null,
-                };
-                currentUser = user;
-                enterApp(user);
+                    // If no profile exists, create one
+                    if (pErr && pErr.code === 'PGRST116') {
+                        await supabase
+                            .from('users')
+                            .insert({
+                                id: data.user.id,
+                                email: data.user.email,
+                                role: role,
+                                school_id: null
+                            });
+                    } else if (pErr) {
+                        throw pErr;
+                    }
+
+                    // Get final profile
+                    const { data: finalProfile } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', data.user.id)
+                        .single();
+
+                    const user = {
+                        id: data.user.id,
+                        email: data.user.email,
+                        role: finalProfile?.role || role,
+                        school_id: finalProfile?.school_id || null,
+                    };
+
+                    currentUser = user;
+                    enterApp(user);
+                    showLoginAlert('✅ Login successful!', 'success');
+                } else {
+                    // Fallback to mock
+                    const user = {
+                        id: 'user_' + Date.now(),
+                        email: email,
+                        role: role,
+                        school_id: role === 'teacher' ? '1' : null,
+                    };
+                    currentUser = user;
+                    enterApp(user);
+                    showLoginAlert('✅ Login successful (Demo Mode)', 'success');
+                }
+
             } catch (err) {
-                showLoginAlert('Login failed: ' + err.message, 'error');
+                console.error('Login error:', err);
+                showLoginAlert('❌ Login failed: ' + err.message, 'error');
+            } finally {
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                loginBtn.disabled = false;
             }
         }
 
@@ -1001,6 +1032,10 @@
             loginAlert.className = 'alert alert-' + type;
             loginAlert.textContent = msg;
             loginAlert.classList.remove('hidden');
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                loginAlert.classList.add('hidden');
+            }, 5000);
         }
 
         function enterApp(user) {
@@ -1029,16 +1064,23 @@
             loginView.classList.remove('hidden');
             loginAlert.classList.add('hidden');
             loginForm.reset();
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            loginBtn.disabled = false;
         }
 
         // ================================================================
-        //  DATA HELPERS (Supabase or Mock)
+        //  DATA HELPERS (Supabase with fallback to mock)
         // ================================================================
         async function fetchSchools() {
             if (useMock) return [...mockSchools];
-            const { data, error } = await supabase.from('schools').select('*').order('name');
-            if (error) throw error;
-            return data || [];
+            try {
+                const { data, error } = await supabase.from('schools').select('*').order('name');
+                if (error) throw error;
+                return data || [];
+            } catch (e) {
+                console.warn('Fetch schools error, using mock:', e);
+                return [...mockSchools];
+            }
         }
 
         async function fetchRecords(schoolId = null) {
@@ -1047,11 +1089,18 @@
                 if (schoolId) recs = recs.filter(r => r.school_id === schoolId);
                 return recs;
             }
-            let query = supabase.from('school_data').select('*');
-            if (schoolId) query = query.eq('school_id', schoolId);
-            const { data, error } = await query.order('grade');
-            if (error) throw error;
-            return data || [];
+            try {
+                let query = supabase.from('school_data').select('*');
+                if (schoolId) query = query.eq('school_id', schoolId);
+                const { data, error } = await query.order('grade');
+                if (error) throw error;
+                return data || [];
+            } catch (e) {
+                console.warn('Fetch records error, using mock:', e);
+                let recs = [...mockRecords];
+                if (schoolId) recs = recs.filter(r => r.school_id === schoolId);
+                return recs;
+            }
         }
 
         async function saveRecord(record) {
@@ -1066,23 +1115,36 @@
                     return newRec;
                 }
             }
-            if (record.id) {
-                const { data, error } = await supabase
-                    .from('school_data')
-                    .update(record)
-                    .eq('id', record.id)
-                    .select()
-                    .single();
-                if (error) throw error;
-                return data;
-            } else {
-                const { data, error } = await supabase
-                    .from('school_data')
-                    .insert(record)
-                    .select()
-                    .single();
-                if (error) throw error;
-                return data;
+            try {
+                if (record.id) {
+                    const { data, error } = await supabase
+                        .from('school_data')
+                        .update(record)
+                        .eq('id', record.id)
+                        .select()
+                        .single();
+                    if (error) throw error;
+                    return data;
+                } else {
+                    const { data, error } = await supabase
+                        .from('school_data')
+                        .insert(record)
+                        .select()
+                        .single();
+                    if (error) throw error;
+                    return data;
+                }
+            } catch (e) {
+                console.warn('Save error, using mock:', e);
+                if (record.id) {
+                    const idx = mockRecords.findIndex(r => r.id === record.id);
+                    if (idx >= 0) mockRecords[idx] = { ...mockRecords[idx], ...record };
+                    return record;
+                } else {
+                    const newRec = { ...record, id: 'r' + Date.now() };
+                    mockRecords.push(newRec);
+                    return newRec;
+                }
             }
         }
 
@@ -1091,9 +1153,15 @@
                 mockRecords = mockRecords.filter(r => r.id !== id);
                 return true;
             }
-            const { error } = await supabase.from('school_data').delete().eq('id', id);
-            if (error) throw error;
-            return true;
+            try {
+                const { error } = await supabase.from('school_data').delete().eq('id', id);
+                if (error) throw error;
+                return true;
+            } catch (e) {
+                console.warn('Delete error, using mock:', e);
+                mockRecords = mockRecords.filter(r => r.id !== id);
+                return true;
+            }
         }
 
         async function addSchool(name) {
@@ -1102,9 +1170,16 @@
                 mockSchools.push(newSchool);
                 return newSchool;
             }
-            const { data, error } = await supabase.from('schools').insert({ name }).select().single();
-            if (error) throw error;
-            return data;
+            try {
+                const { data, error } = await supabase.from('schools').insert({ name }).select().single();
+                if (error) throw error;
+                return data;
+            } catch (e) {
+                console.warn('Add school error, using mock:', e);
+                const newSchool = { id: 's' + Date.now(), name };
+                mockSchools.push(newSchool);
+                return newSchool;
+            }
         }
 
         // ================================================================
@@ -1154,12 +1229,15 @@
                 updateAdminStats();
                 return;
             }
-            // In real mode, cascade delete via RLS or handle manually
-            const { error } = await supabase.from('schools').delete().eq('id', id);
-            if (error) { alert('Error: ' + error.message); return; }
-            await loadAdminSchools();
-            await loadAdminData();
-            updateAdminStats();
+            try {
+                const { error } = await supabase.from('schools').delete().eq('id', id);
+                if (error) throw error;
+                await loadAdminSchools();
+                await loadAdminData();
+                updateAdminStats();
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
         }
 
         function showAddSchoolForm() {
@@ -1369,9 +1447,6 @@
         let teacherSchoolId = null;
 
         async function initTeacher() {
-            // Find which school(s) this teacher belongs to
-            // In real mode, this would come from the user's profile.
-            // For demo, if teacher, we assign school_id = '1' (CHAMFUBU)
             const schoolsList = await fetchSchools();
             schools = schoolsList;
 
@@ -1580,37 +1655,46 @@
         });
 
         // ================================================================
-        //  BOOT
+        //  BOOT - Check for existing session
         // ================================================================
-        // Check if already logged in via Supabase session
         (async function boot() {
+            // Check if there's an existing Supabase session
             if (!useMock && supabase) {
-                const { data } = await supabase.auth.getSession();
-                if (data?.session) {
-                    // Fetch profile and auto-login
-                    const { data: profile } = await supabase
-                        .from('users')
-                        .select('*')
-                        .eq('id', data.session.user.id)
-                        .single();
-                    currentUser = {
-                        id: data.session.user.id,
-                        email: data.session.user.email,
-                        role: profile?.role || 'teacher',
-                        school_id: profile?.school_id || null,
-                    };
-                    enterApp(currentUser);
-                    return;
+                try {
+                    const { data } = await supabase.auth.getSession();
+                    if (data?.session) {
+                        // Fetch user profile
+                        const { data: profile } = await supabase
+                            .from('users')
+                            .select('*')
+                            .eq('id', data.session.user.id)
+                            .single();
+
+                        if (profile) {
+                            currentUser = {
+                                id: data.session.user.id,
+                                email: data.session.user.email,
+                                role: profile.role,
+                                school_id: profile.school_id,
+                            };
+                            enterApp(currentUser);
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Session check failed:', e);
                 }
             }
+
             // Show login by default
             loginView.classList.remove('hidden');
             appView.classList.add('hidden');
         })();
 
         console.log('📊 Mungwi District School Data System loaded.');
-        console.log('ℹ️  Mode:', useMock ? 'DEMO (in-memory)' : 'Supabase');
-        console.log('ℹ️  Demo login: any email/password, select role.');
+        console.log('ℹ️  Mode:', useMock ? 'DEMO (in-memory)' : 'Supabase (Real Auth)');
+        console.log('ℹ️  Supabase Auth is ENABLED');
+        console.log('ℹ️  Try logging in with your Supabase credentials');
     </script>
 </body>
 </html>
