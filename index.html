@@ -73,6 +73,7 @@
             text-decoration: none;
             min-height: 48px;
             min-width: 48px;
+            touch-action: manipulation;
         }
         .btn:active {
             transform: scale(0.96);
@@ -122,6 +123,10 @@
         .btn-block {
             width: 100%;
             justify-content: center;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .app-header {
@@ -897,13 +902,13 @@
     <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  SUPABASE CONFIG - NEW CREDENTIALS
+        //  SUPABASE CONFIG
         // ================================================================
         const SUPABASE_URL = 'https://ruclrfnyepexetxslsnqk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3JsZm55ZXBleGV0eHNsbnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDAxNTQsImV4cCI6MjEwMDgxNjE1NH0.I9aTd8eYkC0LsVeUz9s5j8-pxUmEcaXB9u4vtKU9nhI';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase initialized with new credentials');
+        console.log('✅ Supabase initialized');
 
         // ================================================================
         //  STATE
@@ -912,6 +917,7 @@
         let adminDataCache = [];
         let teacherRecords = [];
         let teacherSchoolId = null;
+        let currentUser = { role: 'admin', email: 'admin@debs.zm' };
 
         // ================================================================
         //  DOM REFS
@@ -922,10 +928,7 @@
         const userRoleTag = $('userRoleTag');
         const userName = $('userName');
 
-        // ================================================================
-        //  SET USER (Admin by default)
-        // ================================================================
-        let currentUser = { role: 'admin', email: 'admin@debs.zm' };
+        // Set user name
         userName.textContent = 'Admin';
         userRoleTag.textContent = 'Admin';
 
@@ -952,7 +955,7 @@
                 return data || [];
             } catch (e) {
                 console.warn('Fetch schools error:', e);
-                showToast('Error loading schools: ' + e.message, 'error');
+                showToast('Error loading schools', 'error');
                 return [];
             }
         }
@@ -966,7 +969,7 @@
                 return data || [];
             } catch (e) {
                 console.warn('Fetch records error:', e);
-                showToast('Error loading records: ' + e.message, 'error');
+                showToast('Error loading records', 'error');
                 return [];
             }
         }
@@ -981,7 +984,7 @@
                         .select()
                         .single();
                     if (error) throw error;
-                    showToast('Record updated successfully!', 'success');
+                    showToast('Record updated!', 'success');
                     return data;
                 } else {
                     const { data, error } = await supabase
@@ -990,7 +993,7 @@
                         .select()
                         .single();
                     if (error) throw error;
-                    showToast('Record saved successfully!', 'success');
+                    showToast('Record saved!', 'success');
                     return data;
                 }
             } catch (e) {
@@ -1004,7 +1007,7 @@
             try {
                 const { error } = await supabase.from('school_data').delete().eq('id', id);
                 if (error) throw error;
-                showToast('Record deleted successfully!', 'success');
+                showToast('Record deleted!', 'success');
                 return true;
             } catch (e) {
                 console.warn('Delete error:', e);
@@ -1017,7 +1020,7 @@
             try {
                 const { data, error } = await supabase.from('schools').insert({ name }).select().single();
                 if (error) throw error;
-                showToast('School added successfully!', 'success');
+                showToast('School added!', 'success');
                 return data;
             } catch (e) {
                 console.warn('Add school error:', e);
@@ -1030,7 +1033,7 @@
             try {
                 const { error } = await supabase.from('schools').delete().eq('id', id);
                 if (error) throw error;
-                showToast('School deleted successfully!', 'success');
+                showToast('School deleted!', 'success');
                 return true;
             } catch (e) {
                 console.warn('Delete school error:', e);
@@ -1046,6 +1049,7 @@
             await loadAdminSchools();
             await loadAdminData();
 
+            // Tab switching
             document.querySelectorAll('.tab-bar .tab').forEach(tab => {
                 tab.onclick = function() {
                     document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
@@ -1077,7 +1081,7 @@
             }
         }
 
-        async function removeSchool(id) {
+        window.removeSchool = async function(id) {
             if (!confirm('Delete this school? All associated data will be removed.')) return;
             const success = await deleteSchool(id);
             if (success) {
@@ -1087,7 +1091,7 @@
             }
         }
 
-        function showAddSchoolForm() {
+        window.showAddSchoolForm = function() {
             const el = $('addSchoolForm');
             if (el) el.classList.toggle('hidden');
             if (el && !el.classList.contains('hidden')) {
@@ -1096,7 +1100,7 @@
             }
         }
 
-        async function addSchool() {
+        window.addSchool = async function() {
             const input = $('newSchoolName');
             if (!input) return;
             const name = input.value.trim();
@@ -1109,12 +1113,10 @@
                 await loadAdminSchools();
                 await loadAdminData();
                 updateAdminStats();
-            } catch (e) {
-                // Error already handled in addSchool function
-            }
+            } catch (e) {}
         }
 
-        async function loadAdminData() {
+        window.loadAdminData = async function() {
             const filterSchool = $('adminFilterSchool');
             const filterVal = filterSchool ? filterSchool.value : '';
             const records = await fetchRecords(filterVal || null);
@@ -1161,7 +1163,7 @@
             updateAdminStats();
         }
 
-        async function adminDeleteRecord(id) {
+        window.adminDeleteRecord = async function(id) {
             if (!confirm('Delete this record?')) return;
             const success = await deleteRecord(id);
             if (success) {
@@ -1211,7 +1213,7 @@
         // ================================================================
         //  EXPORT
         // ================================================================
-        function exportToExcel() {
+        window.exportToExcel = function() {
             const records = adminDataCache;
             if (!records || records.length === 0) {
                 showToast('No data to export.', 'error');
@@ -1278,7 +1280,7 @@
             showToast('Export successful!', 'success');
         }
 
-        function exportToCSV() {
+        window.exportToCSV = function() {
             const records = adminDataCache;
             if (!records || records.length === 0) {
                 showToast('No data to export.', 'error');
@@ -1401,7 +1403,7 @@
             }).join('');
         }
 
-        function resetEntryForm() {
+        window.resetEntryForm = function() {
             const editId = $('editEntryId');
             const title = $('entryFormTitle');
             const submitBtn = $('entrySubmitBtn');
@@ -1416,7 +1418,7 @@
             if (ageRange) ageRange.value = '';
         }
 
-        function editEntry(id) {
+        window.editEntry = function(id) {
             const r = teacherRecords.find(rec => rec.id === id);
             if (!r) return;
             const editId = $('editEntryId');
@@ -1467,7 +1469,7 @@
             if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        async function deleteEntry(id) {
+        window.deleteEntry = async function(id) {
             if (!confirm('Delete this entry?')) return;
             const success = await deleteRecord(id);
             if (success) {
@@ -1475,7 +1477,7 @@
             }
         }
 
-        async function saveEntry(e) {
+        window.saveEntry = async function(e) {
             e.preventDefault();
             if (!teacherSchoolIdLocal) {
                 showToast('No school selected.', 'error');
@@ -1531,9 +1533,7 @@
                     await loadAdminData();
                     updateAdminStats();
                 }
-            } catch (err) {
-                // Error already handled in saveRecord
-            }
+            } catch (err) {}
         }
 
         // ================================================================
