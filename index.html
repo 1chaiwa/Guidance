@@ -175,6 +175,19 @@
             border-radius: 20px;
             text-transform: uppercase;
         }
+        .app-header .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .app-header .status-dot.online {
+            background: #10b981;
+        }
+        .app-header .status-dot.offline {
+            background: #ef4444;
+        }
 
         .container {
             max-width: 1200px;
@@ -614,14 +627,12 @@
             </div>
             <div class="header-right">
                 <div class="user-badge">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="userName">Admin</span>
-                    <span class="role-tag" id="userRoleTag">Admin</span>
+                    <span id="dbStatus"><span class="status-dot offline" id="statusDot"></span> <span id="statusText">Connecting...</span></span>
                 </div>
                 <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="loadData()">
                     <i class="fas fa-sync"></i>
                 </button>
-                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="syncWithSupabase()">
+                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="syncToSupabase()">
                     <i class="fas fa-cloud-upload-alt"></i>
                 </button>
             </div>
@@ -678,6 +689,80 @@
                             </table>
                         </div>
                     </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-pen"></i> Enter School Data</div>
+                        <div class="school-selector">
+                            <label><i class="fas fa-exchange-alt"></i> Select School:</label>
+                            <select id="teacherSchoolSelect" onchange="loadTeacherData()"></select>
+                        </div>
+                        <div class="entry-form-wrap">
+                            <div style="font-weight:700;font-size:14px;color:var(--primary);margin-bottom:10px;" id="entryFormTitle">
+                                <i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry
+                            </div>
+                            <form id="entryForm" onsubmit="return saveEntry(event)">
+                                <input type="hidden" id="editEntryId" value="" />
+                                <div class="form-row">
+                                    <div class="form-group"><label>Grade</label><input type="text" id="fGrade" placeholder="e.g. 1, ECE, 8" required /></div>
+                                    <div class="form-group"><label>Age Range</label><input type="text" id="fAgeRange" placeholder="e.g. 6–11" /></div>
+                                    <div class="form-group"><label>Boys</label><input type="number" id="fEnrolBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Girls</label><input type="number" id="fEnrolGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Teen Preg (Girls)</label><input type="number" id="fTeenPreg" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Early Marriage Boys</label><input type="number" id="fEarlyMarriageBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Early Marriage Girls</label><input type="number" id="fEarlyMarriageGirls" value="0" min="0" /></div>
+                                </div>
+                                <div class="section-label"><i class="fas fa-user-slash"></i> Dropouts due to:</div>
+                                <div class="form-row-3">
+                                    <div class="form-group"><label>Preg Boys</label><input type="number" id="fDropPregBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Preg Girls</label><input type="number" id="fDropPregGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Marriage Boys</label><input type="number" id="fDropMarriageBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Marriage Girls</label><input type="number" id="fDropMarriageGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Death Boys</label><input type="number" id="fDropDeathBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Death Girls</label><input type="number" id="fDropDeathGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Illness Boys</label><input type="number" id="fDropIllnessBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Illness Girls</label><input type="number" id="fDropIllnessGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Orphaned Boys</label><input type="number" id="fDropOrphanedBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Orphaned Girls</label><input type="number" id="fDropOrphanedGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Economic Boys</label><input type="number" id="fDropEconomicBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Economic Girls</label><input type="number" id="fDropEconomicGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>OVC Boys</label><input type="number" id="fDropOvcBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>OVC Girls</label><input type="number" id="fDropOvcGirls" value="0" min="0" /></div>
+                                </div>
+                                <div class="section-label"><i class="fas fa-chart-bar"></i> Other Indicators</div>
+                                <div class="form-row-3">
+                                    <div class="form-group"><label>Absent Boys</label><input type="number" id="fAbsentBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Absent Girls</label><input type="number" id="fAbsentGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Re-entry Boys</label><input type="number" id="fReentryBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Re-entry Girls</label><input type="number" id="fReentryGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Re-admit Boys</label><input type="number" id="fReadmissionBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>Re-admit Girls</label><input type="number" id="fReadmissionGirls" value="0" min="0" /></div>
+                                    <div class="form-group"><label>OVC Boys</label><input type="number" id="fOvcBoys" value="0" min="0" /></div>
+                                    <div class="form-group"><label>OVC Girls</label><input type="number" id="fOvcGirls" value="0" min="0" /></div>
+                                </div>
+                                <div class="entry-actions">
+                                    <button type="submit" class="btn btn-primary" id="entrySubmitBtn"><i class="fas fa-save"></i> Save</button>
+                                    <button type="button" class="btn btn-outline" onclick="resetEntryForm()"><i class="fas fa-undo"></i> Clear</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="mt-12">
+                            <div class="flex-between">
+                                <span style="font-weight:700;font-size:14px;color:var(--primary);"><i class="fas fa-list"></i> Entries</span>
+                                <span id="entryCount" style="font-size:12px;color:var(--text-light);">0 records</span>
+                            </div>
+                            <div class="table-scroll mt-8">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th>
+                                            <th>Age</th><th>Preg</th><th>Drop</th><th>Abs</th><th>Re</th><th>OVC</th>
+                                            <th style="text-align:right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teacherDataBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="tab-adminData" class="tab-content">
@@ -720,92 +805,12 @@
                     </div>
                 </div>
             </div>
-
-            <div id="teacherPanel" class="hidden">
-                <div class="card">
-                    <div class="flex-between">
-                        <div class="card-title" style="margin-bottom:0;"><i class="fas fa-school"></i> My School</div>
-                        <span id="teacherSchoolName" style="font-size:13px;font-weight:600;color:var(--text-light);"></span>
-                    </div>
-                    <div id="teacherSchoolSelector" class="school-selector hidden">
-                        <label><i class="fas fa-exchange-alt"></i> Switch:</label>
-                        <select id="teacherSchoolSelect" onchange="loadTeacherData()"></select>
-                    </div>
-                    <div class="entry-form-wrap">
-                        <div style="font-weight:700;font-size:14px;color:var(--primary);margin-bottom:10px;" id="entryFormTitle">
-                            <i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry
-                        </div>
-                        <form id="entryForm" onsubmit="return saveEntry(event)">
-                            <input type="hidden" id="editEntryId" value="" />
-                            <div class="form-row">
-                                <div class="form-group"><label>Grade</label><input type="text" id="fGrade" placeholder="e.g. 1, ECE, 8" required /></div>
-                                <div class="form-group"><label>Age Range</label><input type="text" id="fAgeRange" placeholder="e.g. 6–11" /></div>
-                                <div class="form-group"><label>Boys</label><input type="number" id="fEnrolBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Girls</label><input type="number" id="fEnrolGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Teen Preg (Girls)</label><input type="number" id="fTeenPreg" value="0" min="0" /></div>
-                                <div class="form-group"><label>Early Marriage Boys</label><input type="number" id="fEarlyMarriageBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Early Marriage Girls</label><input type="number" id="fEarlyMarriageGirls" value="0" min="0" /></div>
-                            </div>
-                            <div class="section-label"><i class="fas fa-user-slash"></i> Dropouts due to:</div>
-                            <div class="form-row-3">
-                                <div class="form-group"><label>Preg Boys</label><input type="number" id="fDropPregBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Preg Girls</label><input type="number" id="fDropPregGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Marriage Boys</label><input type="number" id="fDropMarriageBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Marriage Girls</label><input type="number" id="fDropMarriageGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Death Boys</label><input type="number" id="fDropDeathBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Death Girls</label><input type="number" id="fDropDeathGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Illness Boys</label><input type="number" id="fDropIllnessBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Illness Girls</label><input type="number" id="fDropIllnessGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Orphaned Boys</label><input type="number" id="fDropOrphanedBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Orphaned Girls</label><input type="number" id="fDropOrphanedGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Economic Boys</label><input type="number" id="fDropEconomicBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Economic Girls</label><input type="number" id="fDropEconomicGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>OVC Boys</label><input type="number" id="fDropOvcBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>OVC Girls</label><input type="number" id="fDropOvcGirls" value="0" min="0" /></div>
-                            </div>
-                            <div class="section-label"><i class="fas fa-chart-bar"></i> Other Indicators</div>
-                            <div class="form-row-3">
-                                <div class="form-group"><label>Absent Boys</label><input type="number" id="fAbsentBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Absent Girls</label><input type="number" id="fAbsentGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Re-entry Boys</label><input type="number" id="fReentryBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Re-entry Girls</label><input type="number" id="fReentryGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>Re-admit Boys</label><input type="number" id="fReadmissionBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>Re-admit Girls</label><input type="number" id="fReadmissionGirls" value="0" min="0" /></div>
-                                <div class="form-group"><label>OVC Boys</label><input type="number" id="fOvcBoys" value="0" min="0" /></div>
-                                <div class="form-group"><label>OVC Girls</label><input type="number" id="fOvcGirls" value="0" min="0" /></div>
-                            </div>
-                            <div class="entry-actions">
-                                <button type="submit" class="btn btn-primary" id="entrySubmitBtn"><i class="fas fa-save"></i> Save</button>
-                                <button type="button" class="btn btn-outline" onclick="resetEntryForm()"><i class="fas fa-undo"></i> Clear</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="mt-12">
-                        <div class="flex-between">
-                            <span style="font-weight:700;font-size:14px;color:var(--primary);"><i class="fas fa-list"></i> Entries</span>
-                            <span id="entryCount" style="font-size:12px;color:var(--text-light);">0 records</span>
-                        </div>
-                        <div class="table-scroll mt-8">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th>
-                                        <th>Age</th><th>Preg</th><th>Drop</th><th>Abs</th><th>Re</th><th>OVC</th>
-                                        <th style="text-align:right;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="teacherDataBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
     <script>
         // ================================================================
-        //  SUPABASE CONFIG
+        //  SUPABASE CONFIG - YOUR CREDENTIALS
         // ================================================================
         const SUPABASE_URL = 'https://vnkqhwqolwxoxfwrqqaj.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZua3Fod3FvbHd4b3hmd3JxcWFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNTA5MjcsImV4cCI6MjEwMDgyNjkyN30.KcNuU2QSpkYKJh8PkNtjKgPCeK13KJNGgXlJZLaY8W8';
@@ -816,22 +821,12 @@
         let teacherRecords = [];
         let teacherSchoolId = null;
         let adminDataCache = [];
+        let isSupabaseConnected = false;
 
         // ================================================================
         //  DOM REFS
         // ================================================================
         const $ = id => document.getElementById(id);
-
-        // ================================================================
-        //  INIT SUPABASE
-        // ================================================================
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase initialized');
-        } catch (e) {
-            console.warn('⚠️ Supabase not available, using localStorage fallback.');
-            supabase = null;
-        }
 
         // ================================================================
         //  TOAST NOTIFICATION
@@ -843,23 +838,63 @@
             toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
 
         // ================================================================
-        //  TAB SWITCHING
+        //  UPDATE STATUS DOT
         // ================================================================
-        document.querySelectorAll('.tab-bar .tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                const target = $('tab-' + this.dataset.tab);
-                if (target) target.classList.add('active');
-                if (this.dataset.tab === 'adminData') loadData();
-                if (this.dataset.tab === 'adminDashboard') updateStats();
-            });
-        });
+        function updateStatusDot(connected) {
+            const dot = $('statusDot');
+            const text = $('statusText');
+            if (connected) {
+                dot.className = 'status-dot online';
+                text.textContent = 'Supabase Online';
+            } else {
+                dot.className = 'status-dot offline';
+                text.textContent = 'Offline (Local)';
+            }
+        }
+
+        // ================================================================
+        //  INIT SUPABASE
+        // ================================================================
+        async function initSupabase() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase client created');
+
+                // Test connection by trying to fetch from schools table                const { data, error } = await supabase.from('schools').select('count', { count: 'exact', head: true });
+
+                if (error) {
+                    // Check if error is because table doesn't exist
+                    if (error.message && error.message.includes('relation "schools" does not exist')) {
+                        console.warn('⚠️ Tables not found. Please run the SQL setup script.');
+                        isSupabaseConnected = false;
+                        updateStatusDot(false);
+                        showToast('⚠️ Tables not found. Using local storage only.', 'error');
+                        return false;
+                    }
+                    console.warn('⚠️ Supabase connection test failed:', error.message);
+                    isSupabaseConnected = false;
+                    updateStatusDot(false);
+                    showToast('⚠️ Supabase error: ' + error.message, 'error');
+                    return false;
+                }
+
+                isSupabaseConnected = true;
+                updateStatusDot(true);
+                showToast('✅ Connected to Supabase', 'success');
+                return true;
+
+            } catch (e) {
+                console.warn('⚠️ Supabase not available:', e.message);
+                isSupabaseConnected = false;
+                updateStatusDot(false);
+                showToast('⚠️ Using local storage only', 'info');
+                return false;
+            }
+        }
 
         // ================================================================
         //  LOAD DATA FROM SUPABASE
@@ -868,45 +903,65 @@
             try {
                 // Load schools
                 let schoolsData = [];
-                if (supabase) {
-                    const { data, error } = await supabase
-                        .from('schools')
-                        .select('*')
-                        .order('name');
-                    if (!error && data) {
-                        schoolsData = data;
-                    } else {
-                        console.warn('Supabase schools error, using localStorage:', error);
+                if (isSupabaseConnected && supabase) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('schools')
+                            .select('*')
+                            .order('name');
+                        if (!error && data && data.length > 0) {
+                            schoolsData = data;
+                        } else {
+                            // If no data in Supabase, try localStorage
+                            schoolsData = JSON.parse(localStorage.getItem('schools') || '[]');
+                            // If localStorage has data, sync it up
+                            if (schoolsData.length > 0 && isSupabaseConnected) {
+                                for (const s of schoolsData) {
+                                    await supabase.from('schools').upsert(s, { onConflict: 'id' });
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Supabase schools error, using localStorage:', e);
                         schoolsData = JSON.parse(localStorage.getItem('schools') || '[]');
                     }
                 } else {
                     schoolsData = JSON.parse(localStorage.getItem('schools') || '[]');
                 }
+
+                // If still no schools, seed with sample data
+                if (schoolsData.length === 0) {
+                    await seedSampleData();
+                    return;
+                }
                 schools = schoolsData;
 
                 // Load records
                 let recordsData = [];
-                if (supabase) {
-                    const { data, error } = await supabase
-                        .from('records')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-                    if (!error && data) {
-                        recordsData = data;
-                    } else {
-                        console.warn('Supabase records error, using localStorage:', error);
+                if (isSupabaseConnected && supabase) {
+                    try {
+                        const { data, error } = await supabase
+                            .from('records')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (!error && data && data.length > 0) {
+                            recordsData = data;
+                        } else {
+                            recordsData = JSON.parse(localStorage.getItem('records') || '[]');
+                            if (recordsData.length > 0 && isSupabaseConnected) {
+                                for (const r of recordsData) {
+                                    await supabase.from('records').upsert(r, { onConflict: 'id' });
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Supabase records error, using localStorage:', e);
                         recordsData = JSON.parse(localStorage.getItem('records') || '[]');
                     }
                 } else {
                     recordsData = JSON.parse(localStorage.getItem('records') || '[]');
                 }
                 records = recordsData;
-
-                // If no data in Supabase, seed with sample data
-                if (records.length === 0 && schools.length === 0) {
-                    await seedSampleData();
-                    return;
-                }
 
                 // Update UI
                 const filterSchool = $('adminFilterSchool');
@@ -922,7 +977,9 @@
                 loadTeacherSelector();
                 $('lastUpdatedAdmin').textContent = new Date().toLocaleTimeString();
 
-                showToast('✅ Data loaded from Supabase!', 'success');
+                if (records.length > 0) {
+                    showToast('📊 Loaded ' + records.length + ' records', 'success');
+                }
             } catch (err) {
                 console.error('Load error:', err);
                 showToast('Error loading data: ' + err.message, 'error');
@@ -987,27 +1044,28 @@
                     readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
             ];
 
-            // Save to Supabase
-            if (supabase) {
+            // Save to Supabase if connected
+            let savedToSupabase = false;
+            if (isSupabaseConnected && supabase) {
                 try {
-                    // Insert schools
                     for (const s of sampleSchools) {
                         await supabase.from('schools').upsert(s, { onConflict: 'id' });
                     }
-                    // Insert records
                     for (const r of sampleRecords) {
                         await supabase.from('records').upsert(r, { onConflict: 'id' });
                     }
-                    showToast('✅ Sample data seeded to Supabase!', 'success');
+                    savedToSupabase = true;
+                    showToast('✅ Sample data saved to Supabase!', 'success');
                 } catch (e) {
-                    console.warn('Supabase seed error, using localStorage:', e);
-                    localStorage.setItem('schools', JSON.stringify(sampleSchools));
-                    localStorage.setItem('records', JSON.stringify(sampleRecords));
-                    showToast('📦 Sample data saved locally.', 'info');
+                    console.warn('Supabase seed error:', e);
                 }
-            } else {
-                localStorage.setItem('schools', JSON.stringify(sampleSchools));
-                localStorage.setItem('records', JSON.stringify(sampleRecords));
+            }
+
+            // Always save to localStorage as well
+            localStorage.setItem('schools', JSON.stringify(sampleSchools));
+            localStorage.setItem('records', JSON.stringify(sampleRecords));
+
+            if (!savedToSupabase) {
                 showToast('📦 Sample data saved locally.', 'info');
             }
 
@@ -1016,28 +1074,28 @@
         }
 
         // ================================================================
-        //  SYNC WITH SUPABASE
+        //  SYNC TO SUPABASE
         // ================================================================
-        async function syncWithSupabase() {
-            if (!supabase) {
-                showToast('⚠️ Supabase not available. Check your connection.', 'error');
+        async function syncToSupabase() {
+            if (!isSupabaseConnected || !supabase) {
+                showToast('⚠️ Not connected to Supabase. Check your internet.', 'error');
                 return;
             }
 
-            showToast('🔄 Syncing with Supabase...', 'info');
+            showToast('🔄 Syncing to Supabase...', 'info');
 
             try {
-                // Upload schools
+                // Sync schools
                 for (const s of schools) {
                     await supabase.from('schools').upsert(s, { onConflict: 'id' });
                 }
 
-                // Upload records
+                // Sync records
                 for (const r of records) {
                     await supabase.from('records').upsert(r, { onConflict: 'id' });
                 }
 
-                showToast('✅ Data synced to Supabase!', 'success');
+                showToast('✅ All data synced to Supabase!', 'success');
             } catch (err) {
                 showToast('❌ Sync failed: ' + err.message, 'error');
                 console.error('Sync error:', err);
@@ -1143,20 +1201,22 @@
                 ).join('');
                 if (schools.length > 0) {
                     teacherSchoolId = schools[0].id;
-                    $('teacherSchoolSelector').classList.remove('hidden');
+                    sel.value = teacherSchoolId;
                     loadTeacherData();
-                    updateTeacherSchoolName();
                 }
             }
         }
 
-        function updateTeacherSchoolName() {
-            const school = schools.find(s => s.id === teacherSchoolId);
-            $('teacherSchoolName').textContent = school ? school.name : '';
-        }
-
         function loadTeacherData() {
-            if (!teacherSchoolId) return;
+            const sel = $('teacherSchoolSelect');
+            if (sel) teacherSchoolId = sel.value;
+            if (!teacherSchoolId) {
+                if (schools.length > 0) {
+                    teacherSchoolId = schools[0].id;
+                } else {
+                    return;
+                }
+            }
             teacherRecords = records.filter(r => r.school_id === teacherSchoolId);
             renderTeacherData();
             $('entryCount').textContent = teacherRecords.length + ' records';
@@ -1220,7 +1280,7 @@
             const newSchool = { id: 's' + Date.now(), name: name };
 
             try {
-                if (supabase) {
+                if (isSupabaseConnected && supabase) {
                     const { error } = await supabase.from('schools').insert([newSchool]);
                     if (error) throw new Error(error.message);
                 }
@@ -1240,7 +1300,7 @@
         async function deleteSchool(id) {
             if (!confirm('Delete this school? All associated data will be removed.')) return;
             try {
-                if (supabase) {
+                if (isSupabaseConnected && supabase) {
                     const { error } = await supabase.from('schools').delete().eq('id', id);
                     if (error) throw new Error(error.message);
                 }
@@ -1263,7 +1323,7 @@
         async function deleteRecord(id) {
             if (!confirm('Delete this record?')) return;
             try {
-                if (supabase) {
+                if (isSupabaseConnected && supabase) {
                     const { error } = await supabase.from('records').delete().eq('id', id);
                     if (error) throw new Error(error.message);
                 }
@@ -1332,7 +1392,7 @@
         async function deleteTeacherRecord(id) {
             if (!confirm('Delete this entry?')) return;
             try {
-                if (supabase) {
+                if (isSupabaseConnected && supabase) {
                     const { error } = await supabase.from('records').delete().eq('id', id);
                     if (error) throw new Error(error.message);
                 }
@@ -1348,6 +1408,8 @@
 
         async function saveEntry(e) {
             e.preventDefault();
+            const sel = $('teacherSchoolSelect');
+            if (sel) teacherSchoolId = sel.value;
             if (!teacherSchoolId) {
                 showToast('No school selected.', 'error');
                 return;
@@ -1397,7 +1459,7 @@
             try {
                 if (editId) {
                     payload.id = editId;
-                    if (supabase) {
+                    if (isSupabaseConnected && supabase) {
                         const { error } = await supabase.from('records').update(payload).eq('id', editId);
                         if (error) throw new Error(error.message);
                     }
@@ -1406,7 +1468,7 @@
                     showToast('✅ Record updated!', 'success');
                 } else {
                     payload.id = 'r' + Date.now();
-                    if (supabase) {
+                    if (isSupabaseConnected && supabase) {
                         const { error } = await supabase.from('records').insert([payload]);
                         if (error) throw new Error(error.message);
                     }
@@ -1507,26 +1569,24 @@
         //  BOOT
         // ================================================================
         async function init() {
-            // Show admin panel
-            document.getElementById('adminPanel').classList.remove('hidden');
-            document.getElementById('teacherPanel').classList.add('hidden');
+            // Initialize Supabase
+            await initSupabase();
 
-            // Load data from Supabase
+            // Load data
             await loadData();
 
-            // Set teacher school selector
+            // Set teacher school selector change handler
             const teacherSelect = $('teacherSchoolSelect');
             if (teacherSelect) {
                 teacherSelect.onchange = function() {
                     teacherSchoolId = this.value;
                     loadTeacherData();
-                    updateTeacherSchoolName();
                 };
             }
 
             console.log('📊 Mungwi District School Data System loaded.');
-            console.log('✅ Connected to Supabase:', supabase ? 'Yes' : 'No (using localStorage)');
-            showToast('✅ System ready!', 'success');
+            console.log('🔗 Supabase URL:', SUPABASE_URL);
+            console.log('📡 Connection status:', isSupabaseConnected ? 'Online' : 'Offline (Local)');
         }
 
         // Start the app
