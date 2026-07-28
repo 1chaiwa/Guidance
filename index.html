@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>Mungwi District · School Data</title>
 
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
         * {
@@ -74,8 +71,6 @@
             min-height: 48px;
             min-width: 48px;
             touch-action: manipulation;
-            position: relative;
-            z-index: 10;
         }
         .btn:active {
             transform: scale(0.96);
@@ -122,14 +117,6 @@
             min-height: 34px;
             min-width: 34px;
         }
-        .btn-block {
-            width: 100%;
-            justify-content: center;
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
 
         .app-header {
             background: var(--primary);
@@ -150,7 +137,6 @@
             gap: 8px;
             font-weight: 700;
             font-size: 16px;
-            letter-spacing: 0.3px;
         }
         .app-header .brand i {
             font-size: 24px;
@@ -185,7 +171,6 @@
             padding: 2px 8px;
             border-radius: 20px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .container {
@@ -202,7 +187,6 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
             margin-bottom: 14px;
-            transition: 0.2s;
         }
         .card-title {
             font-size: 16px;
@@ -287,8 +271,6 @@
             justify-content: center;
             gap: 5px;
             min-height: 38px;
-            position: relative;
-            z-index: 10;
         }
         .tab-bar .tab.active {
             background: #fff;
@@ -328,7 +310,6 @@
             white-space: nowrap;
             font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
         table td {
             padding: 8px 10px;
@@ -337,15 +318,6 @@
         }
         table tr:last-child td {
             border-bottom: none;
-        }
-        table tr:hover td {
-            background: #fafbfc;
-        }
-        .text-muted {
-            color: var(--text-light);
-        }
-        .text-center {
-            text-align: center;
         }
 
         .form-grid {
@@ -368,7 +340,6 @@
             color: var(--text-light);
             margin-bottom: 2px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
         .form-group input,
         .form-group select {
@@ -472,12 +443,6 @@
         .mt-12 {
             margin-top: 12px;
         }
-        .mt-16 {
-            margin-top: 16px;
-        }
-        .mb-8 {
-            margin-bottom: 8px;
-        }
         .flex {
             display: flex;
             gap: 8px;
@@ -491,125 +456,20 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        .w-full {
-            width: 100%;
-        }
         .text-right {
             text-align: right;
-        }
-        .text-sm {
-            font-size: 12px;
         }
         .fw-600 {
             font-weight: 600;
         }
-
-        @media (max-width: 640px) {
-            .stat-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 6px;
-            }
-            .stat-box .num {
-                font-size: 18px;
-            }
-            .stat-box .label {
-                font-size: 9px;
-            }
-            .form-grid,
-            .form-grid-3,
-            .entry-form-wrap .form-row,
-            .entry-form-wrap .form-row-3 {
-                grid-template-columns: 1fr;
-            }
-            .app-header .brand {
-                font-size: 14px;
-            }
-            .app-header .brand i {
-                font-size: 20px;
-            }
-            .app-header .user-badge {
-                font-size: 11px;
-                padding: 3px 8px;
-            }
-            .app-header .user-badge .role-tag {
-                font-size: 8px;
-                padding: 1px 6px;
-            }
-            .tab-bar .tab {
-                font-size: 11px;
-                padding: 6px 8px;
-                min-height: 34px;
-            }
-            .tab-bar .tab i {
-                font-size: 12px;
-            }
-            .card {
-                padding: 12px;
-                border-radius: 12px;
-            }
-            .btn {
-                font-size: 13px;
-                padding: 10px 14px;
-                min-height: 40px;
-            }
-            .container {
-                padding: 8px 8px 70px;
-            }
-            .school-selector {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .entry-actions .btn {
-                flex: 1 1 100%;
-            }
-            .table-wrap {
-                font-size: 11px;
-            }
-            table {
-                font-size: 11px;
-                min-width: 480px;
-            }
-            table th,
-            table td {
-                padding: 6px 8px;
-            }
-        }
-        @media (max-width: 400px) {
-            .stat-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 4px;
-            }
-            .stat-box {
-                padding: 8px 4px;
-            }
-            .stat-box .num {
-                font-size: 16px;
-            }
-            .stat-box .label {
-                font-size: 8px;
-            }
-        }
-
-        .spinner {
+        .text-ellipsis {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .loading-overlay {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 0;
-            gap: 10px;
+        .text-muted {
             color: var(--text-light);
         }
 
@@ -636,14 +496,6 @@
             position: sticky;
             top: 0;
             z-index: 5;
-        }
-
-        .text-ellipsis {
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: inline-block;
         }
 
         .toast {
@@ -686,43 +538,72 @@
             background: var(--primary);
         }
 
-        /* Fix for button clickability */
-        .btn,
-        .tab,
-        .clickable {
-            pointer-events: auto !important;
-            cursor: pointer !important;
-        }
-
-        /* Ensure no overlays are blocking clicks */
-        .card,
-        .container,
-        .app-header,
-        .tab-bar {
-            pointer-events: auto !important;
-        }
-
-        /* Table button fixes */
-        .table-wrap td .btn,
-        .table-wrap td button {
-            pointer-events: auto !important;
-            cursor: pointer !important;
-            position: relative;
-            z-index: 20;
+        @media (max-width: 640px) {
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .stat-box .num {
+                font-size: 18px;
+            }
+            .stat-box .label {
+                font-size: 9px;
+            }
+            .form-grid,
+            .form-grid-3,
+            .entry-form-wrap .form-row,
+            .entry-form-wrap .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+            .app-header .brand {
+                font-size: 14px;
+            }
+            .app-header .brand i {
+                font-size: 20px;
+            }
+            .tab-bar .tab {
+                font-size: 11px;
+                padding: 6px 8px;
+                min-height: 34px;
+            }
+            .tab-bar .tab i {
+                font-size: 12px;
+            }
+            .card {
+                padding: 12px;
+                border-radius: 12px;
+            }
+            .btn {
+                font-size: 13px;
+                padding: 10px 14px;
+                min-height: 40px;
+            }
+            .container {
+                padding: 8px 8px 70px;
+            }
+            .school-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .entry-actions .btn {
+                flex: 1 1 100%;
+            }
+            table {
+                font-size: 11px;
+                min-width: 480px;
+            }
+            table th,
+            table td {
+                padding: 6px 8px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <!-- ============================================================ -->
-    <!-- MAIN APP VIEW -->
-    <!-- ============================================================ -->
     <div id="appView">
-
-        <!-- HEADER -->
         <header class="app-header">
             <div class="brand">
                 <i class="fas fa-graduation-cap"></i>
@@ -734,18 +615,14 @@
                     <span id="userName">Admin</span>
                     <span class="role-tag" id="userRoleTag">Admin</span>
                 </div>
-                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="location.reload()">
+                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="loadData()">
                     <i class="fas fa-sync"></i>
                 </button>
             </div>
         </header>
 
         <div class="container">
-
-            <!-- ADMIN PANEL -->
             <div id="adminPanel">
-
-                <!-- Tabs -->
                 <div class="tab-bar">
                     <button class="tab active" data-tab="adminDashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
                     <button class="tab" data-tab="adminSchools"><i class="fas fa-school"></i> Schools</button>
@@ -753,7 +630,6 @@
                     <button class="tab" data-tab="adminExport"><i class="fas fa-file-export"></i> Export</button>
                 </div>
 
-                <!-- Tab: Dashboard -->
                 <div id="tab-adminDashboard" class="tab-content active">
                     <div class="card">
                         <div class="card-title">
@@ -771,12 +647,11 @@
                     </div>
                 </div>
 
-                <!-- Tab: Schools -->
                 <div id="tab-adminSchools" class="tab-content">
                     <div class="card">
                         <div class="flex-between">
                             <div class="card-title" style="margin-bottom:0;"><i class="fas fa-school"></i> Manage Schools</div>
-                            <button class="btn btn-success btn-sm" id="btnShowAddSchool"><i class="fas fa-plus"></i> Add</button>
+                            <button class="btn btn-success btn-sm" onclick="showAddSchoolForm()"><i class="fas fa-plus"></i> Add</button>
                         </div>
                         <div id="addSchoolForm" class="hidden" style="margin-top:12px;padding:12px;background:#f8fafc;border-radius:var(--radius-sm);border:1px solid var(--border);">
                             <div class="form-grid">
@@ -785,8 +660,8 @@
                                     <input type="text" id="newSchoolName" placeholder="e.g. CHAMFUBU PRIMARY" />
                                 </div>
                                 <div class="form-group" style="display:flex;align-items:flex-end;gap:6px;">
-                                    <button class="btn btn-primary btn-sm" id="btnAddSchool"><i class="fas fa-save"></i> Add</button>
-                                    <button class="btn btn-outline btn-sm" id="btnCancelAddSchool">Cancel</button>
+                                    <button class="btn btn-primary btn-sm" onclick="addSchool()"><i class="fas fa-save"></i> Add</button>
+                                    <button class="btn btn-outline btn-sm" onclick="document.getElementById('addSchoolForm').classList.add('hidden')">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -799,16 +674,15 @@
                     </div>
                 </div>
 
-                <!-- Tab: All Data -->
                 <div id="tab-adminData" class="tab-content">
                     <div class="card">
                         <div class="flex-between">
                             <div class="card-title" style="margin-bottom:0;"><i class="fas fa-table"></i> All Records</div>
                             <div class="flex">
-                                <select id="adminFilterSchool" style="padding:6px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:12px;background:#fff;">
+                                <select id="adminFilterSchool" onchange="loadData()" style="padding:6px 10px;border-radius:var(--radius-sm);border:1.5px solid var(--border);font-size:12px;background:#fff;">
                                     <option value="">All Schools</option>
                                 </select>
-                                <button class="btn btn-primary btn-sm" id="btnRefreshData"><i class="fas fa-sync"></i></button>
+                                <button class="btn btn-primary btn-sm" onclick="loadData()"><i class="fas fa-sync"></i></button>
                             </div>
                         </div>
                         <div class="table-scroll mt-8">
@@ -826,14 +700,13 @@
                     </div>
                 </div>
 
-                <!-- Tab: Export -->
                 <div id="tab-adminExport" class="tab-content">
                     <div class="card">
                         <div class="card-title"><i class="fas fa-file-export"></i> Export Data</div>
                         <p style="color:var(--text-light);margin-bottom:12px;font-size:13px;">Download all records as Excel or CSV.</p>
                         <div class="flex">
-                            <button class="btn btn-success" id="btnExportExcel"><i class="fas fa-file-excel"></i> Excel</button>
-                            <button class="btn btn-outline" id="btnExportCSV"><i class="fas fa-file-csv"></i> CSV</button>
+                            <button class="btn btn-success" onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                            <button class="btn btn-outline" onclick="exportToCSV()"><i class="fas fa-file-csv"></i> CSV</button>
                         </div>
                         <div style="margin-top:12px;font-size:12px;color:var(--text-light);">
                             <i class="fas fa-info-circle"></i> Includes all fields: enrolment, dropouts, absenteeism, re-entry, OVC.
@@ -842,7 +715,6 @@
                 </div>
             </div>
 
-            <!-- TEACHER PANEL (Hidden) -->
             <div id="teacherPanel" class="hidden">
                 <div class="card">
                     <div class="flex-between">
@@ -851,13 +723,13 @@
                     </div>
                     <div id="teacherSchoolSelector" class="school-selector hidden">
                         <label><i class="fas fa-exchange-alt"></i> Switch:</label>
-                        <select id="teacherSchoolSelect"></select>
+                        <select id="teacherSchoolSelect" onchange="loadTeacherData()"></select>
                     </div>
                     <div class="entry-form-wrap">
                         <div style="font-weight:700;font-size:14px;color:var(--primary);margin-bottom:10px;" id="entryFormTitle">
                             <i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry
                         </div>
-                        <form id="entryForm" onsubmit="return false;">
+                        <form id="entryForm" onsubmit="return saveEntry(event)">
                             <input type="hidden" id="editEntryId" value="" />
                             <div class="form-row">
                                 <div class="form-group"><label>Grade</label><input type="text" id="fGrade" placeholder="e.g. 1, ECE, 8" required /></div>
@@ -897,8 +769,8 @@
                                 <div class="form-group"><label>OVC Girls</label><input type="number" id="fOvcGirls" value="0" min="0" /></div>
                             </div>
                             <div class="entry-actions">
-                                <button type="button" class="btn btn-primary" id="btnSaveEntry"><i class="fas fa-save"></i> Save</button>
-                                <button type="button" class="btn btn-outline" id="btnClearEntry"><i class="fas fa-undo"></i> Clear</button>
+                                <button type="submit" class="btn btn-primary" id="entrySubmitBtn"><i class="fas fa-save"></i> Save</button>
+                                <button type="button" class="btn btn-outline" onclick="resetEntryForm()"><i class="fas fa-undo"></i> Clear</button>
                             </div>
                         </form>
                     </div>
@@ -922,33 +794,66 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-        </div><!-- /.container -->
-    </div><!-- /#appView -->
-
-    <!-- ============================================================ -->
-    <!-- JAVASCRIPT -->
-    <!-- ============================================================ -->
     <script>
         // ================================================================
-        //  SUPABASE CONFIG - FIXED URL
+        //  LOCAL DATA STORAGE (No Supabase - Works Immediately)
         // ================================================================
-        const SUPABASE_URL = 'https://ruclrfnyepexetxslsnqk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ1Y3JsZm55ZXBleGV0eHNsbnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDAxNTQsImV4cCI6MjEwMDgxNjE1NH0.I9aTd8eYkC0LsVeUz9s5j8-pxUmEcaXB9u4vtKU9nhI';
 
-        console.log('🔗 Connecting to Supabase:', SUPABASE_URL);
+        // Sample data
+        let schools = [
+            { id: '1', name: 'CHAMFUBU PRIMARY' },
+            { id: '2', name: 'CHANDA-WEYAYA PRIMARY' },
+            { id: '3', name: 'CHANDAMALI PRIMARY' },
+            { id: '4', name: 'CHANGALA PRIMARY' },
+            { id: '5', name: 'CHANUNDU PRIMARY' },
+            { id: '6', name: 'CHEWE PRIMARY' },
+            { id: '7', name: 'CHIBILE PRIMARY' },
+            { id: '8', name: 'CHIFULO PRIMARY' },
+            { id: '9', name: 'CHIKULU PRIMARY' },
+            { id: '10', name: 'CHILAILA PRIMARY' },
+        ];
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase initialized');
+        let records = [
+            { id: 'r1', school_id: '1', grade: '1', enrolment_boys: 154, enrolment_girls: 153, age_range: '6-11',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 1, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 1, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 1,
+                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                absenteeism_boys: 28, absenteeism_girls: 34, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 2, readmission_girls: 0, ovc_boys: 8, ovc_girls: 12 },
+            { id: 'r2', school_id: '5', grade: '1', enrolment_boys: 41, enrolment_girls: 44, age_range: '6–11',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 3, dropout_orphaned_girls: 2, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 12, dropout_ovc_girls: 11,
+                absenteeism_boys: 12, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+            { id: 'r3', school_id: '5', grade: '2', enrolment_boys: 40, enrolment_girls: 42, age_range: '8–13',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 4, dropout_orphaned_girls: 1, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 11, dropout_ovc_girls: 9,
+                absenteeism_boys: 8, absenteeism_girls: 7, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+            { id: 'r4', school_id: '6', grade: '1', enrolment_boys: 25, enrolment_girls: 15, age_range: '7–8',
+                teen_preg: 0, early_marriage_boys: 0, early_marriage_girls: 0,
+                dropout_preg_boys: 0, dropout_preg_girls: 0, dropout_marriage_boys: 0, dropout_marriage_girls: 0,
+                dropout_death_boys: 0, dropout_death_girls: 0, dropout_illness_boys: 0, dropout_illness_girls: 0,
+                dropout_orphaned_boys: 0, dropout_orphaned_girls: 0, dropout_economic_boys: 0, dropout_economic_girls: 0,
+                dropout_ovc_boys: 0, dropout_ovc_girls: 0,
+                absenteeism_boys: 180, absenteeism_girls: 150, reentry_boys: 0, reentry_girls: 0,
+                readmission_boys: 0, readmission_girls: 0, ovc_boys: 0, ovc_girls: 0 },
+        ];
 
-        // ================================================================
-        //  STATE
-        // ================================================================
-        let schools = [];
-        let adminDataCache = [];
         let teacherRecords = [];
         let teacherSchoolId = null;
-        let currentUser = { role: 'admin', email: 'admin@debs.zm' };
+        let adminDataCache = [];
 
         // ================================================================
         //  DOM REFS
@@ -956,12 +861,6 @@
         const $ = id => document.getElementById(id);
         const adminPanel = $('adminPanel');
         const teacherPanel = $('teacherPanel');
-        const userRoleTag = $('userRoleTag');
-        const userName = $('userName');
-
-        // Set user name
-        userName.textContent = 'Admin';
-        userRoleTag.textContent = 'Admin';
 
         // ================================================================
         //  TOAST NOTIFICATION
@@ -977,258 +876,48 @@
         }
 
         // ================================================================
-        //  DATA HELPERS
+        //  TAB SWITCHING
         // ================================================================
-        async function fetchSchools() {
-            try {
-                const { data, error } = await supabase.from('schools').select('*').order('name');
-                if (error) throw error;
-                return data || [];
-            } catch (e) {
-                console.warn('Fetch schools error:', e);
-                showToast('Error loading schools', 'error');
-                return [];
-            }
-        }
-
-        async function fetchRecords(schoolId = null) {
-            try {
-                let query = supabase.from('school_data').select('*');
-                if (schoolId) query = query.eq('school_id', schoolId);
-                const { data, error } = await query.order('grade');
-                if (error) throw error;
-                return data || [];
-            } catch (e) {
-                console.warn('Fetch records error:', e);
-                showToast('Error loading records', 'error');
-                return [];
-            }
-        }
-
-        async function saveRecord(record) {
-            try {
-                if (record.id) {
-                    const { data, error } = await supabase
-                        .from('school_data')
-                        .update(record)
-                        .eq('id', record.id)
-                        .select()
-                        .single();
-                    if (error) throw error;
-                    showToast('Record updated!', 'success');
-                    return data;
-                } else {
-                    const { data, error } = await supabase
-                        .from('school_data')
-                        .insert(record)
-                        .select()
-                        .single();
-                    if (error) throw error;
-                    showToast('Record saved!', 'success');
-                    return data;
-                }
-            } catch (e) {
-                console.warn('Save error:', e);
-                showToast('Error saving: ' + e.message, 'error');
-                throw e;
-            }
-        }
-
-        async function deleteRecord(id) {
-            try {
-                const { error } = await supabase.from('school_data').delete().eq('id', id);
-                if (error) throw error;
-                showToast('Record deleted!', 'success');
-                return true;
-            } catch (e) {
-                console.warn('Delete error:', e);
-                showToast('Error deleting: ' + e.message, 'error');
-                return false;
-            }
-        }
-
-        async function addSchool(name) {
-            try {
-                const { data, error } = await supabase.from('schools').insert({ name }).select().single();
-                if (error) throw error;
-                showToast('School added!', 'success');
-                return data;
-            } catch (e) {
-                console.warn('Add school error:', e);
-                showToast('Error adding school: ' + e.message, 'error');
-                throw e;
-            }
-        }
-
-        async function deleteSchool(id) {
-            try {
-                const { error } = await supabase.from('schools').delete().eq('id', id);
-                if (error) throw error;
-                showToast('School deleted!', 'success');
-                return true;
-            } catch (e) {
-                console.warn('Delete school error:', e);
-                showToast('Error deleting school: ' + e.message, 'error');
-                return false;
-            }
-        }
-
-        // ================================================================
-        //  ADMIN FUNCTIONS
-        // ================================================================
-        async function initAdmin() {
-            await loadAdminSchools();
-            await loadAdminData();
-
-            // Tab switching - using event listeners
-            document.querySelectorAll('.tab-bar .tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    const target = $('tab-' + this.dataset.tab);
-                    if (target) target.classList.add('active');
-                    if (this.dataset.tab === 'adminData') loadAdminData();
-                    if (this.dataset.tab === 'adminDashboard') updateAdminStats();
-                });
+        document.querySelectorAll('.tab-bar .tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                const target = $('tab-' + this.dataset.tab);
+                if (target) target.classList.add('active');
+                if (this.dataset.tab === 'adminData') loadData();
+                if (this.dataset.tab === 'adminDashboard') updateStats();
             });
+        });
 
-            // Button event listeners
-            const btnShowAddSchool = $('btnShowAddSchool');
-            if (btnShowAddSchool) {
-                btnShowAddSchool.addEventListener('click', function() {
-                    const el = $('addSchoolForm');
-                    if (el) el.classList.toggle('hidden');
-                    if (el && !el.classList.contains('hidden')) {
-                        const input = $('newSchoolName');
-                        if (input) input.focus();
-                    }
-                });
-            }
-
-            const btnAddSchool = $('btnAddSchool');
-            if (btnAddSchool) {
-                btnAddSchool.addEventListener('click', async function() {
-                    const input = $('newSchoolName');
-                    if (!input) return;
-                    const name = input.value.trim();
-                    if (!name) { showToast('Please enter a school name.', 'error'); return; }
-                    try {
-                        await addSchool(name);
-                        input.value = '';
-                        const el = $('addSchoolForm');
-                        if (el) el.classList.add('hidden');
-                        await loadAdminSchools();
-                        await loadAdminData();
-                        updateAdminStats();
-                    } catch (e) {}
-                });
-            }
-
-            const btnCancelAddSchool = $('btnCancelAddSchool');
-            if (btnCancelAddSchool) {
-                btnCancelAddSchool.addEventListener('click', function() {
-                    const el = $('addSchoolForm');
-                    if (el) el.classList.add('hidden');
-                });
-            }
-
-            const btnRefreshData = $('btnRefreshData');
-            if (btnRefreshData) {
-                btnRefreshData.addEventListener('click', function() {
-                    loadAdminData();
-                });
-            }
-
-            const btnExportExcel = $('btnExportExcel');
-            if (btnExportExcel) {
-                btnExportExcel.addEventListener('click', function() {
-                    exportToExcel();
-                });
-            }
-
-            const btnExportCSV = $('btnExportCSV');
-            if (btnExportCSV) {
-                btnExportCSV.addEventListener('click', function() {
-                    exportToCSV();
-                });
-            }
-
-            // Filter change event
-            const adminFilterSchool = $('adminFilterSchool');
-            if (adminFilterSchool) {
-                adminFilterSchool.addEventListener('change', function() {
-                    loadAdminData();
-                });
-            }
-
-            // Teacher form buttons
-            const btnSaveEntry = $('btnSaveEntry');
-            if (btnSaveEntry) {
-                btnSaveEntry.addEventListener('click', function() {
-                    saveEntry();
-                });
-            }
-
-            const btnClearEntry = $('btnClearEntry');
-            if (btnClearEntry) {
-                btnClearEntry.addEventListener('click', function() {
-                    resetEntryForm();
-                });
-            }
-
-            updateAdminStats();
-        }
-
-        async function loadAdminSchools() {
-            schools = await fetchSchools();
-            const tbody = $('schoolListBody');
-            if (!tbody) return;
-            tbody.innerHTML = schools.map((s, i) =>
-                `<tr><td>${i+1}</td><td><span class="text-ellipsis">${s.name}</span></td>
-                         <td style="text-align:right;"><button class="btn btn-danger btn-sm" data-school-id="${s.id}"><i class="fas fa-trash"></i></button></td></tr>`
-            ).join('');
-
-            // Add delete event listeners to school delete buttons
-            tbody.querySelectorAll('.btn-danger').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const id = this.dataset.schoolId;
-                    if (!confirm('Delete this school? All associated data will be removed.')) return;
-                    const success = await deleteSchool(id);
-                    if (success) {
-                        await loadAdminSchools();
-                        await loadAdminData();
-                        updateAdminStats();
-                    }
-                });
-            });
-
-            const sel = $('adminFilterSchool');
-            if (sel) {
-                const currentVal = sel.value;
-                sel.innerHTML = `<option value="">All Schools</option>` +
-                    schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-                sel.value = currentVal;
-            }
-        }
-
-        async function loadAdminData() {
+        // ================================================================
+        //  DATA FUNCTIONS
+        // ================================================================
+        function loadData() {
             const filterSchool = $('adminFilterSchool');
             const filterVal = filterSchool ? filterSchool.value : '';
-            const records = await fetchRecords(filterVal || null);
-            adminDataCache = records;
+            let filteredRecords = records;
+            if (filterVal) {
+                filteredRecords = records.filter(r => r.school_id === filterVal);
+            }
+            adminDataCache = filteredRecords;
+            renderAdminData();
+            updateStats();
+        }
 
+        function renderAdminData() {
             const tbody = $('adminDataBody');
             if (!tbody) return;
-            if (records.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><i class="fas fa-inbox"></i><p>No records found</p></div></td></tr>`;
+            if (adminDataCache.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="12"><div class="empty-state"><i class="fas fa-inbox"></i><p>No records found</p></div></td></tr>`;
                 return;
             }
 
             const schoolMap = {};
             schools.forEach(s => schoolMap[s.id] = s.name);
 
-            tbody.innerHTML = records.map(r => {
+            tbody.innerHTML = adminDataCache.map(r => {
                 const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
                 const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
                     (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
@@ -1253,35 +942,20 @@
                             <td>${absent}</td>
                             <td>${reentry}</td>
                             <td>${ovc}</td>
-                            <td style="text-align:right;"><button class="btn btn-danger btn-sm" data-record-id="${r.id}"><i class="fas fa-trash"></i></button></td>
+                            <td style="text-align:right;"><button class="btn btn-danger btn-sm" onclick="deleteRecord('${r.id}')"><i class="fas fa-trash"></i></button></td>
                         </tr>`;
             }).join('');
-
-            // Add delete event listeners to record delete buttons
-            tbody.querySelectorAll('.btn-danger').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const id = this.dataset.recordId;
-                    if (!confirm('Delete this record?')) return;
-                    const success = await deleteRecord(id);
-                    if (success) {
-                        await loadAdminData();
-                        updateAdminStats();
-                    }
-                });
-            });
-
-            updateAdminStats();
         }
 
-        function updateAdminStats() {
-            const records = adminDataCache;
-            const schoolSet = new Set(records.map(r => r.school_id));
+        function updateStats() {
+            const recordsToUse = adminDataCache;
+            const schoolSet = new Set(recordsToUse.map(r => r.school_id));
             let totalEnrol = 0,
                 teenPreg = 0,
                 dropouts = 0,
                 absent = 0,
                 ovc = 0;
-            records.forEach(r => {
+            recordsToUse.forEach(r => {
                 totalEnrol += (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
                 teenPreg += (r.teen_preg || 0);
                 dropouts += (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
@@ -1294,36 +968,88 @@
                 absent += (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
                 ovc += (r.ovc_boys || 0) + (r.ovc_girls || 0);
             });
-            const statSchools = $('statSchools');
-            const statTotalEnrol = $('statTotalEnrol');
-            const statTeenPreg = $('statTeenPreg');
-            const statDropouts = $('statDropouts');
-            const statAbsenteeism = $('statAbsenteeism');
-            const statOVC = $('statOVC');
-            const lastUpdated = $('lastUpdatedAdmin');
+            $('statSchools').textContent = schoolSet.size || schools.length;
+            $('statTotalEnrol').textContent = totalEnrol;
+            $('statTeenPreg').textContent = teenPreg;
+            $('statDropouts').textContent = dropouts;
+            $('statAbsenteeism').textContent = absent;
+            $('statOVC').textContent = ovc;
+            $('lastUpdatedAdmin').textContent = new Date().toLocaleTimeString();
+        }
 
-            if (statSchools) statSchools.textContent = schoolSet.size || schools.length;
-            if (statTotalEnrol) statTotalEnrol.textContent = totalEnrol;
-            if (statTeenPreg) statTeenPreg.textContent = teenPreg;
-            if (statDropouts) statDropouts.textContent = dropouts;
-            if (statAbsenteeism) statAbsenteeism.textContent = absent;
-            if (statOVC) statOVC.textContent = ovc;
-            if (lastUpdated) lastUpdated.textContent = new Date().toLocaleTimeString();
+        // ================================================================
+        //  SCHOOL MANAGEMENT
+        // ================================================================
+        function loadSchools() {
+            const tbody = $('schoolListBody');
+            if (!tbody) return;
+            tbody.innerHTML = schools.map((s, i) =>
+                `<tr><td>${i+1}</td><td><span class="text-ellipsis">${s.name}</span></td>
+                         <td style="text-align:right;"><button class="btn btn-danger btn-sm" onclick="deleteSchool('${s.id}')"><i class="fas fa-trash"></i></button></td></tr>`
+            ).join('');
+
+            const sel = $('adminFilterSchool');
+            if (sel) {
+                const currentVal = sel.value;
+                sel.innerHTML = `<option value="">All Schools</option>` +
+                    schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                sel.value = currentVal;
+            }
+        }
+
+        function showAddSchoolForm() {
+            const el = $('addSchoolForm');
+            if (el) el.classList.toggle('hidden');
+            if (el && !el.classList.contains('hidden')) {
+                $('newSchoolName').focus();
+            }
+        }
+
+        function addSchool() {
+            const input = $('newSchoolName');
+            if (!input) return;
+            const name = input.value.trim();
+            if (!name) { showToast('Please enter a school name.', 'error'); return; }
+            const newSchool = { id: 's' + Date.now(), name: name };
+            schools.push(newSchool);
+            input.value = '';
+            $('addSchoolForm').classList.add('hidden');
+            loadSchools();
+            loadData();
+            showToast('School added!', 'success');
+        }
+
+        function deleteSchool(id) {
+            if (!confirm('Delete this school? All associated data will be removed.')) return;
+            schools = schools.filter(s => s.id !== id);
+            records = records.filter(r => r.school_id !== id);
+            loadSchools();
+            loadData();
+            showToast('School deleted!', 'success');
+        }
+
+        // ================================================================
+        //  RECORD MANAGEMENT
+        // ================================================================
+        function deleteRecord(id) {
+            if (!confirm('Delete this record?')) return;
+            records = records.filter(r => r.id !== id);
+            loadData();
+            showToast('Record deleted!', 'success');
         }
 
         // ================================================================
         //  EXPORT
         // ================================================================
         function exportToExcel() {
-            const records = adminDataCache;
-            if (!records || records.length === 0) {
+            if (adminDataCache.length === 0) {
                 showToast('No data to export.', 'error');
                 return;
             }
             const schoolMap = {};
             schools.forEach(s => schoolMap[s.id] = s.name);
 
-            const rows = records.map(r => {
+            const rows = adminDataCache.map(r => {
                 const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
                 const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
                     (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
@@ -1343,33 +1069,9 @@
                     'Enrolment Total': total,
                     'Age Range': r.age_range || '',
                     'Teen Pregnancy': r.teen_preg || 0,
-                    'Early Marriage Boys': r.early_marriage_boys || 0,
-                    'Early Marriage Girls': r.early_marriage_girls || 0,
-                    'Dropout Pregnancy Boys': r.dropout_preg_boys || 0,
-                    'Dropout Pregnancy Girls': r.dropout_preg_girls || 0,
-                    'Dropout Marriage Boys': r.dropout_marriage_boys || 0,
-                    'Dropout Marriage Girls': r.dropout_marriage_girls || 0,
-                    'Dropout Death Boys': r.dropout_death_boys || 0,
-                    'Dropout Death Girls': r.dropout_death_girls || 0,
-                    'Dropout Illness Boys': r.dropout_illness_boys || 0,
-                    'Dropout Illness Girls': r.dropout_illness_girls || 0,
-                    'Dropout Orphaned Boys': r.dropout_orphaned_boys || 0,
-                    'Dropout Orphaned Girls': r.dropout_orphaned_girls || 0,
-                    'Dropout Economic Boys': r.dropout_economic_boys || 0,
-                    'Dropout Economic Girls': r.dropout_economic_girls || 0,
-                    'Dropout OVC Boys': r.dropout_ovc_boys || 0,
-                    'Dropout OVC Girls': r.dropout_ovc_girls || 0,
                     'Dropouts Total': dropouts,
-                    'Absenteeism Boys': r.absenteeism_boys || 0,
-                    'Absenteeism Girls': r.absenteeism_girls || 0,
                     'Absenteeism Total': absent,
-                    'Re-entry Boys': r.reentry_boys || 0,
-                    'Re-entry Girls': r.reentry_girls || 0,
                     'Re-entry Total': reentry,
-                    'Re-admission Boys': r.readmission_boys || 0,
-                    'Re-admission Girls': r.readmission_girls || 0,
-                    'OVC Boys': r.ovc_boys || 0,
-                    'OVC Girls': r.ovc_girls || 0,
                     'OVC Total': ovc,
                 };
             });
@@ -1382,8 +1084,7 @@
         }
 
         function exportToCSV() {
-            const records = adminDataCache;
-            if (!records || records.length === 0) {
+            if (adminDataCache.length === 0) {
                 showToast('No data to export.', 'error');
                 return;
             }
@@ -1391,7 +1092,7 @@
             schools.forEach(s => schoolMap[s.id] = s.name);
             let csv = 'School,Grade,Enrolment Boys,Enrolment Girls,Enrolment Total,Age Range,Teen Pregnancy,' +
                 'Dropouts Total,Absenteeism Total,Re-entry Total,OVC Total\n';
-            records.forEach(r => {
+            adminDataCache.forEach(r => {
                 const total = (r.enrolment_boys || 0) + (r.enrolment_girls || 0);
                 const dropouts = (r.dropout_preg_boys || 0) + (r.dropout_preg_girls || 0) +
                     (r.dropout_marriage_boys || 0) + (r.dropout_marriage_girls || 0) +
@@ -1419,50 +1120,34 @@
         // ================================================================
         //  TEACHER FUNCTIONS
         // ================================================================
-        let teacherSchoolIdLocal = null;
-
-        async function initTeacher() {
-            const schoolsList = await fetchSchools();
-            schools = schoolsList;
-            if (schoolsList.length > 0) {
-                teacherSchoolIdLocal = schoolsList[0].id;
+        function initTeacher() {
+            if (schools.length > 0) {
+                teacherSchoolId = schools[0].id;
             }
             const sel = $('teacherSchoolSelect');
             if (sel) {
-                sel.innerHTML = schoolsList.map(s =>
-                    `<option value="${s.id}" ${s.id === teacherSchoolIdLocal ? 'selected' : ''}>${s.name}</option>`
+                sel.innerHTML = schools.map(s =>
+                    `<option value="${s.id}" ${s.id === teacherSchoolId ? 'selected' : ''}>${s.name}</option>`
                 ).join('');
-                if (schoolsList.length > 1) {
-                    const selector = $('teacherSchoolSelector');
-                    if (selector) selector.classList.remove('hidden');
-                    sel.addEventListener('change', function() {
-                        teacherSchoolIdLocal = this.value;
-                        loadTeacherData();
-                        updateTeacherSchoolName();
-                    });
-                } else {
-                    const selector = $('teacherSchoolSelector');
-                    if (selector) selector.classList.add('hidden');
+                if (schools.length > 1) {
+                    $('teacherSchoolSelector').classList.remove('hidden');
                 }
             }
             updateTeacherSchoolName();
-            await loadTeacherData();
+            loadTeacherData();
             resetEntryForm();
         }
 
         function updateTeacherSchoolName() {
-            const school = schools.find(s => s.id === teacherSchoolIdLocal);
-            const nameEl = $('teacherSchoolName');
-            if (nameEl) nameEl.textContent = school ? school.name : '';
+            const school = schools.find(s => s.id === teacherSchoolId);
+            $('teacherSchoolName').textContent = school ? school.name : '';
         }
 
-        async function loadTeacherData() {
-            if (!teacherSchoolIdLocal) return;
-            const records = await fetchRecords(teacherSchoolIdLocal);
-            teacherRecords = records;
+        function loadTeacherData() {
+            if (!teacherSchoolId) return;
+            teacherRecords = records.filter(r => r.school_id === teacherSchoolId);
             renderTeacherData();
-            const countEl = $('entryCount');
-            if (countEl) countEl.textContent = records.length + ' records';
+            $('entryCount').textContent = teacherRecords.length + ' records';
         }
 
         function renderTeacherData() {
@@ -1497,99 +1182,74 @@
                             <td>${reentry}</td>
                             <td>${ovc}</td>
                             <td style="text-align:right;">
-                                <button class="btn btn-primary btn-sm" data-edit-id="${r.id}"><i class="fas fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm" data-delete-id="${r.id}"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-primary btn-sm" onclick="editEntry('${r.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteTeacherRecord('${r.id}')"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>`;
             }).join('');
-
-            // Add edit and delete event listeners
-            tbody.querySelectorAll('[data-edit-id]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    editEntry(this.dataset.editId);
-                });
-            });
-
-            tbody.querySelectorAll('[data-delete-id]').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const id = this.dataset.deleteId;
-                    if (!confirm('Delete this entry?')) return;
-                    const success = await deleteRecord(id);
-                    if (success) {
-                        await loadTeacherData();
-                    }
-                });
-            });
         }
 
         function resetEntryForm() {
-            const editId = $('editEntryId');
-            const title = $('entryFormTitle');
-            const submitBtn = $('btnSaveEntry');
-            if (editId) editId.value = '';
-            if (title) title.innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry';
-            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+            $('editEntryId').value = '';
+            $('entryFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry';
+            $('entrySubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save';
             document.querySelectorAll('#entryForm input[type="number"]').forEach(el => el.value = '0');
             document.querySelectorAll('#entryForm input[type="text"]').forEach(el => el.value = '');
-            const grade = $('fGrade');
-            const ageRange = $('fAgeRange');
-            if (grade) grade.value = '';
-            if (ageRange) ageRange.value = '';
+            $('fGrade').value = '';
+            $('fAgeRange').value = '';
         }
 
         function editEntry(id) {
             const r = teacherRecords.find(rec => rec.id === id);
             if (!r) return;
-            const editId = $('editEntryId');
-            const title = $('entryFormTitle');
-            const submitBtn = $('btnSaveEntry');
-            if (editId) editId.value = r.id;
-            if (title) title.innerHTML = '<i class="fas fa-edit" style="color:var(--accent-dark);"></i> Edit Entry';
-            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+            $('editEntryId').value = r.id;
+            $('entryFormTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--accent-dark);"></i> Edit Entry';
+            $('entrySubmitBtn').innerHTML = '<i class="fas fa-save"></i> Update';
 
-            const fields = {
-                'fGrade': r.grade || '',
-                'fAgeRange': r.age_range || '',
-                'fEnrolBoys': r.enrolment_boys || 0,
-                'fEnrolGirls': r.enrolment_girls || 0,
-                'fTeenPreg': r.teen_preg || 0,
-                'fEarlyMarriageBoys': r.early_marriage_boys || 0,
-                'fEarlyMarriageGirls': r.early_marriage_girls || 0,
-                'fDropPregBoys': r.dropout_preg_boys || 0,
-                'fDropPregGirls': r.dropout_preg_girls || 0,
-                'fDropMarriageBoys': r.dropout_marriage_boys || 0,
-                'fDropMarriageGirls': r.dropout_marriage_girls || 0,
-                'fDropDeathBoys': r.dropout_death_boys || 0,
-                'fDropDeathGirls': r.dropout_death_girls || 0,
-                'fDropIllnessBoys': r.dropout_illness_boys || 0,
-                'fDropIllnessGirls': r.dropout_illness_girls || 0,
-                'fDropOrphanedBoys': r.dropout_orphaned_boys || 0,
-                'fDropOrphanedGirls': r.dropout_orphaned_girls || 0,
-                'fDropEconomicBoys': r.dropout_economic_boys || 0,
-                'fDropEconomicGirls': r.dropout_economic_girls || 0,
-                'fDropOvcBoys': r.dropout_ovc_boys || 0,
-                'fDropOvcGirls': r.dropout_ovc_girls || 0,
-                'fAbsentBoys': r.absenteeism_boys || 0,
-                'fAbsentGirls': r.absenteeism_girls || 0,
-                'fReentryBoys': r.reentry_boys || 0,
-                'fReentryGirls': r.reentry_girls || 0,
-                'fReadmissionBoys': r.readmission_boys || 0,
-                'fReadmissionGirls': r.readmission_girls || 0,
-                'fOvcBoys': r.ovc_boys || 0,
-                'fOvcGirls': r.ovc_girls || 0,
-            };
+            $('fGrade').value = r.grade || '';
+            $('fAgeRange').value = r.age_range || '';
+            $('fEnrolBoys').value = r.enrolment_boys || 0;
+            $('fEnrolGirls').value = r.enrolment_girls || 0;
+            $('fTeenPreg').value = r.teen_preg || 0;
+            $('fEarlyMarriageBoys').value = r.early_marriage_boys || 0;
+            $('fEarlyMarriageGirls').value = r.early_marriage_girls || 0;
+            $('fDropPregBoys').value = r.dropout_preg_boys || 0;
+            $('fDropPregGirls').value = r.dropout_preg_girls || 0;
+            $('fDropMarriageBoys').value = r.dropout_marriage_boys || 0;
+            $('fDropMarriageGirls').value = r.dropout_marriage_girls || 0;
+            $('fDropDeathBoys').value = r.dropout_death_boys || 0;
+            $('fDropDeathGirls').value = r.dropout_death_girls || 0;
+            $('fDropIllnessBoys').value = r.dropout_illness_boys || 0;
+            $('fDropIllnessGirls').value = r.dropout_illness_girls || 0;
+            $('fDropOrphanedBoys').value = r.dropout_orphaned_boys || 0;
+            $('fDropOrphanedGirls').value = r.dropout_orphaned_girls || 0;
+            $('fDropEconomicBoys').value = r.dropout_economic_boys || 0;
+            $('fDropEconomicGirls').value = r.dropout_economic_girls || 0;
+            $('fDropOvcBoys').value = r.dropout_ovc_boys || 0;
+            $('fDropOvcGirls').value = r.dropout_ovc_girls || 0;
+            $('fAbsentBoys').value = r.absenteeism_boys || 0;
+            $('fAbsentGirls').value = r.absenteeism_girls || 0;
+            $('fReentryBoys').value = r.reentry_boys || 0;
+            $('fReentryGirls').value = r.reentry_girls || 0;
+            $('fReadmissionBoys').value = r.readmission_boys || 0;
+            $('fReadmissionGirls').value = r.readmission_girls || 0;
+            $('fOvcBoys').value = r.ovc_boys || 0;
+            $('fOvcGirls').value = r.ovc_girls || 0;
 
-            Object.keys(fields).forEach(id => {
-                const el = $(id);
-                if (el) el.value = fields[id];
-            });
-
-            const form = $('entryForm');
-            if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            $('entryForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        async function saveEntry() {
-            if (!teacherSchoolIdLocal) {
+        function deleteTeacherRecord(id) {
+            if (!confirm('Delete this entry?')) return;
+            records = records.filter(r => r.id !== id);
+            loadTeacherData();
+            loadData();
+            showToast('Record deleted!', 'success');
+        }
+
+        function saveEntry(e) {
+            e.preventDefault();
+            if (!teacherSchoolId) {
                 showToast('No school selected.', 'error');
                 return;
             }
@@ -1600,65 +1260,87 @@
             }
 
             const payload = {
-                school_id: teacherSchoolIdLocal,
+                school_id: teacherSchoolId,
                 grade: grade.value.trim(),
-                age_range: $('fAgeRange') ? $('fAgeRange').value.trim() : '',
-                enrolment_boys: parseInt($('fEnrolBoys') ? $('fEnrolBoys').value : 0) || 0,
-                enrolment_girls: parseInt($('fEnrolGirls') ? $('fEnrolGirls').value : 0) || 0,
-                teen_preg: parseInt($('fTeenPreg') ? $('fTeenPreg').value : 0) || 0,
-                early_marriage_boys: parseInt($('fEarlyMarriageBoys') ? $('fEarlyMarriageBoys').value : 0) || 0,
-                early_marriage_girls: parseInt($('fEarlyMarriageGirls') ? $('fEarlyMarriageGirls').value : 0) || 0,
-                dropout_preg_boys: parseInt($('fDropPregBoys') ? $('fDropPregBoys').value : 0) || 0,
-                dropout_preg_girls: parseInt($('fDropPregGirls') ? $('fDropPregGirls').value : 0) || 0,
-                dropout_marriage_boys: parseInt($('fDropMarriageBoys') ? $('fDropMarriageBoys').value : 0) || 0,
-                dropout_marriage_girls: parseInt($('fDropMarriageGirls') ? $('fDropMarriageGirls').value : 0) || 0,
-                dropout_death_boys: parseInt($('fDropDeathBoys') ? $('fDropDeathBoys').value : 0) || 0,
-                dropout_death_girls: parseInt($('fDropDeathGirls') ? $('fDropDeathGirls').value : 0) || 0,
-                dropout_illness_boys: parseInt($('fDropIllnessBoys') ? $('fDropIllnessBoys').value : 0) || 0,
-                dropout_illness_girls: parseInt($('fDropIllnessGirls') ? $('fDropIllnessGirls').value : 0) || 0,
-                dropout_orphaned_boys: parseInt($('fDropOrphanedBoys') ? $('fDropOrphanedBoys').value : 0) || 0,
-                dropout_orphaned_girls: parseInt($('fDropOrphanedGirls') ? $('fDropOrphanedGirls').value : 0) || 0,
-                dropout_economic_boys: parseInt($('fDropEconomicBoys') ? $('fDropEconomicBoys').value : 0) || 0,
-                dropout_economic_girls: parseInt($('fDropEconomicGirls') ? $('fDropEconomicGirls').value : 0) || 0,
-                dropout_ovc_boys: parseInt($('fDropOvcBoys') ? $('fDropOvcBoys').value : 0) || 0,
-                dropout_ovc_girls: parseInt($('fDropOvcGirls') ? $('fDropOvcGirls').value : 0) || 0,
-                absenteeism_boys: parseInt($('fAbsentBoys') ? $('fAbsentBoys').value : 0) || 0,
-                absenteeism_girls: parseInt($('fAbsentGirls') ? $('fAbsentGirls').value : 0) || 0,
-                reentry_boys: parseInt($('fReentryBoys') ? $('fReentryBoys').value : 0) || 0,
-                reentry_girls: parseInt($('fReentryGirls') ? $('fReentryGirls').value : 0) || 0,
-                readmission_boys: parseInt($('fReadmissionBoys') ? $('fReadmissionBoys').value : 0) || 0,
-                readmission_girls: parseInt($('fReadmissionGirls') ? $('fReadmissionGirls').value : 0) || 0,
-                ovc_boys: parseInt($('fOvcBoys') ? $('fOvcBoys').value : 0) || 0,
-                ovc_girls: parseInt($('fOvcGirls') ? $('fOvcGirls').value : 0) || 0,
+                age_range: $('fAgeRange').value.trim(),
+                enrolment_boys: parseInt($('fEnrolBoys').value) || 0,
+                enrolment_girls: parseInt($('fEnrolGirls').value) || 0,
+                teen_preg: parseInt($('fTeenPreg').value) || 0,
+                early_marriage_boys: parseInt($('fEarlyMarriageBoys').value) || 0,
+                early_marriage_girls: parseInt($('fEarlyMarriageGirls').value) || 0,
+                dropout_preg_boys: parseInt($('fDropPregBoys').value) || 0,
+                dropout_preg_girls: parseInt($('fDropPregGirls').value) || 0,
+                dropout_marriage_boys: parseInt($('fDropMarriageBoys').value) || 0,
+                dropout_marriage_girls: parseInt($('fDropMarriageGirls').value) || 0,
+                dropout_death_boys: parseInt($('fDropDeathBoys').value) || 0,
+                dropout_death_girls: parseInt($('fDropDeathGirls').value) || 0,
+                dropout_illness_boys: parseInt($('fDropIllnessBoys').value) || 0,
+                dropout_illness_girls: parseInt($('fDropIllnessGirls').value) || 0,
+                dropout_orphaned_boys: parseInt($('fDropOrphanedBoys').value) || 0,
+                dropout_orphaned_girls: parseInt($('fDropOrphanedGirls').value) || 0,
+                dropout_economic_boys: parseInt($('fDropEconomicBoys').value) || 0,
+                dropout_economic_girls: parseInt($('fDropEconomicGirls').value) || 0,
+                dropout_ovc_boys: parseInt($('fDropOvcBoys').value) || 0,
+                dropout_ovc_girls: parseInt($('fDropOvcGirls').value) || 0,
+                absenteeism_boys: parseInt($('fAbsentBoys').value) || 0,
+                absenteeism_girls: parseInt($('fAbsentGirls').value) || 0,
+                reentry_boys: parseInt($('fReentryBoys').value) || 0,
+                reentry_girls: parseInt($('fReentryGirls').value) || 0,
+                readmission_boys: parseInt($('fReadmissionBoys').value) || 0,
+                readmission_girls: parseInt($('fReadmissionGirls').value) || 0,
+                ovc_boys: parseInt($('fOvcBoys').value) || 0,
+                ovc_girls: parseInt($('fOvcGirls').value) || 0,
             };
 
-            const editId = $('editEntryId');
-            if (editId && editId.value) payload.id = editId.value;
+            const editId = $('editEntryId').value;
+            if (editId) {
+                payload.id = editId;
+                const idx = records.findIndex(r => r.id === editId);
+                if (idx >= 0) records[idx] = { ...records[idx], ...payload };
+                showToast('Record updated!', 'success');
+            } else {
+                payload.id = 'r' + Date.now();
+                records.push(payload);
+                showToast('Record saved!', 'success');
+            }
 
-            try {
-                await saveRecord(payload);
-                resetEntryForm();
-                await loadTeacherData();
-                if (currentUser.role === 'admin') {
-                    await loadAdminData();
-                    updateAdminStats();
-                }
-            } catch (err) {}
+            resetEntryForm();
+            loadTeacherData();
+            loadData();
         }
 
         // ================================================================
         //  BOOT
         // ================================================================
-        (async function boot() {
+        function init() {
             // Show admin panel by default
             adminPanel.classList.remove('hidden');
             teacherPanel.classList.add('hidden');
-            await initAdmin();
+
+            // Load data
+            loadSchools();
+            loadData();
+
+            // Set teacher school selector
+            const teacherSelect = $('teacherSchoolSelect');
+            if (teacherSelect) {
+                teacherSelect.innerHTML = schools.map(s =>
+                    `<option value="${s.id}">${s.name}</option>`
+                ).join('');
+                teacherSelect.onchange = function() {
+                    teacherSchoolId = this.value;
+                    loadTeacherData();
+                    updateTeacherSchoolName();
+                };
+            }
+
             console.log('📊 Mungwi District School Data System loaded.');
-            console.log('✅ Admin mode active');
-            console.log('🔗 Connected to Supabase: ' + SUPABASE_URL);
+            console.log('✅ Using local data storage (no Supabase required)');
             showToast('System ready!', 'success');
-        })();
+        }
+
+        // Start the app
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
