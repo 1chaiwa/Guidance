@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
-        /* ----- RESET & BASE (MTN Style) ----- */
         * {
             margin: 0;
             padding: 0;
@@ -47,7 +46,6 @@
             overflow-x: hidden;
         }
 
-        /* ----- SCROLLBAR ----- */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -60,7 +58,6 @@
             border-radius: 10px;
         }
 
-        /* ----- BUTTONS (MTN Style) ----- */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -127,7 +124,6 @@
             justify-content: center;
         }
 
-        /* ----- HEADER (MTN Style) ----- */
         .app-header {
             background: var(--primary);
             color: #fff;
@@ -185,7 +181,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ----- CONTAINER ----- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -193,7 +188,6 @@
             width: 100%;
         }
 
-        /* ----- CARD (MTN Style) ----- */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -226,7 +220,6 @@
             margin-left: auto;
         }
 
-        /* ----- STATS (MTN Grid) ----- */
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -261,7 +254,6 @@
             margin-bottom: 2px;
         }
 
-        /* ----- TAB BAR (MTN Style) ----- */
         .tab-bar {
             display: flex;
             gap: 4px;
@@ -304,7 +296,6 @@
             display: block;
         }
 
-        /* ----- TABLE (Mobile Friendly) ----- */
         .table-wrap {
             overflow-x: auto;
             margin-top: 8px;
@@ -348,7 +339,6 @@
             text-align: center;
         }
 
-        /* ----- FORMS (Mobile Optimized) ----- */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -410,7 +400,6 @@
             font-size: 14px;
         }
 
-        /* ----- ENTRY FORM ----- */
         .entry-form-wrap {
             background: #f8fafc;
             border-radius: var(--radius-sm);
@@ -439,7 +428,6 @@
             min-width: 80px;
         }
 
-        /* ----- SCHOOL SELECTOR ----- */
         .school-selector {
             background: #f8fafc;
             padding: 10px 14px;
@@ -466,7 +454,6 @@
             min-width: 140px;
         }
 
-        /* ----- HIDDEN / UTILITY ----- */
         .hidden {
             display: none !important;
         }
@@ -508,7 +495,6 @@
             font-weight: 600;
         }
 
-        /* ----- RESPONSIVE (Mobile First) ----- */
         @media (max-width: 640px) {
             .stat-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -595,7 +581,6 @@
             }
         }
 
-        /* ----- LOADING ----- */
         .spinner {
             display: inline-block;
             width: 20px;
@@ -619,7 +604,6 @@
             color: var(--text-light);
         }
 
-        /* ----- Empty State ----- */
         .empty-state {
             text-align: center;
             padding: 30px 10px;
@@ -635,7 +619,6 @@
             font-size: 13px;
         }
 
-        /* ----- Table Scroll ----- */
         .table-scroll {
             max-height: 380px;
             overflow-y: auto;
@@ -658,11 +641,11 @@
 <body>
 
     <!-- ============================================================ -->
-    <!-- MAIN APP VIEW (No Login - Direct Access) -->
+    <!-- MAIN APP VIEW -->
     <!-- ============================================================ -->
     <div id="appView">
 
-        <!-- HEADER (MTN Style) -->
+        <!-- HEADER -->
         <header class="app-header">
             <div class="brand">
                 <i class="fas fa-graduation-cap"></i>
@@ -674,17 +657,15 @@
                     <span id="userName">Admin</span>
                     <span class="role-tag" id="userRoleTag">Admin</span>
                 </div>
-                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="handleLogout()">
-                    <i class="fas fa-sign-out-alt"></i>
+                <button class="btn btn-sm btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="location.reload()">
+                    <i class="fas fa-sync"></i>
                 </button>
             </div>
         </header>
 
         <div class="container">
 
-            <!-- ========================================================== -->
-            <!-- ADMIN PANEL (Default View) -->
-            <!-- ========================================================== -->
+            <!-- ADMIN PANEL -->
             <div id="adminPanel">
 
                 <!-- Tabs -->
@@ -710,10 +691,6 @@
                             <div class="stat-box"><span class="icon"><i class="fas fa-clock"></i></span><div class="num" id="statAbsenteeism">-</div><div class="label">Absenteeism</div></div>
                             <div class="stat-box"><span class="icon"><i class="fas fa-heart"></i></span><div class="num" id="statOVC">-</div><div class="label">OVC</div></div>
                         </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title"><i class="fas fa-info-circle"></i> Quick Overview</div>
-                        <p style="color:var(--text-light);font-size:13px;">Select <strong>"All Data"</strong> tab to view and filter all school records.</p>
                     </div>
                 </div>
 
@@ -788,31 +765,23 @@
                 </div>
             </div>
 
-            <!-- ========================================================== -->
-            <!-- TEACHER PANEL (Hidden by default) -->
-            <!-- ========================================================== -->
+            <!-- TEACHER PANEL (Hidden) -->
             <div id="teacherPanel" class="hidden">
-
                 <div class="card">
                     <div class="flex-between">
                         <div class="card-title" style="margin-bottom:0;"><i class="fas fa-school"></i> My School</div>
                         <span id="teacherSchoolName" style="font-size:13px;font-weight:600;color:var(--text-light);"></span>
                     </div>
-
-                    <!-- School selector -->
                     <div id="teacherSchoolSelector" class="school-selector hidden">
                         <label><i class="fas fa-exchange-alt"></i> Switch:</label>
                         <select id="teacherSchoolSelect" onchange="loadTeacherData()"></select>
                     </div>
-
-                    <!-- Entry Form -->
                     <div class="entry-form-wrap">
                         <div style="font-weight:700;font-size:14px;color:var(--primary);margin-bottom:10px;" id="entryFormTitle">
                             <i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry
                         </div>
                         <form id="entryForm" onsubmit="return saveEntry(event)">
                             <input type="hidden" id="editEntryId" value="" />
-
                             <div class="form-row">
                                 <div class="form-group"><label>Grade</label><input type="text" id="fGrade" placeholder="e.g. 1, ECE, 8" required /></div>
                                 <div class="form-group"><label>Age Range</label><input type="text" id="fAgeRange" placeholder="e.g. 6–11" /></div>
@@ -822,7 +791,6 @@
                                 <div class="form-group"><label>Early Marriage Boys</label><input type="number" id="fEarlyMarriageBoys" value="0" min="0" /></div>
                                 <div class="form-group"><label>Early Marriage Girls</label><input type="number" id="fEarlyMarriageGirls" value="0" min="0" /></div>
                             </div>
-
                             <div class="section-label"><i class="fas fa-user-slash"></i> Dropouts due to:</div>
                             <div class="form-row-3">
                                 <div class="form-group"><label>Preg Boys</label><input type="number" id="fDropPregBoys" value="0" min="0" /></div>
@@ -840,7 +808,6 @@
                                 <div class="form-group"><label>OVC Boys</label><input type="number" id="fDropOvcBoys" value="0" min="0" /></div>
                                 <div class="form-group"><label>OVC Girls</label><input type="number" id="fDropOvcGirls" value="0" min="0" /></div>
                             </div>
-
                             <div class="section-label"><i class="fas fa-chart-bar"></i> Other Indicators</div>
                             <div class="form-row-3">
                                 <div class="form-group"><label>Absent Boys</label><input type="number" id="fAbsentBoys" value="0" min="0" /></div>
@@ -852,15 +819,12 @@
                                 <div class="form-group"><label>OVC Boys</label><input type="number" id="fOvcBoys" value="0" min="0" /></div>
                                 <div class="form-group"><label>OVC Girls</label><input type="number" id="fOvcGirls" value="0" min="0" /></div>
                             </div>
-
                             <div class="entry-actions">
                                 <button type="submit" class="btn btn-primary" id="entrySubmitBtn"><i class="fas fa-save"></i> Save</button>
                                 <button type="button" class="btn btn-outline" onclick="resetEntryForm()"><i class="fas fa-undo"></i> Clear</button>
                             </div>
                         </form>
                     </div>
-
-                    <!-- Existing entries -->
                     <div class="mt-12">
                         <div class="flex-between">
                             <span style="font-weight:700;font-size:14px;color:var(--primary);"><i class="fas fa-list"></i> Entries</span>
@@ -1055,20 +1019,22 @@
         }
 
         // ================================================================
-        //  ADMIN
+        //  ADMIN FUNCTIONS
         // ================================================================
         async function initAdmin() {
             await loadAdminSchools();
             await loadAdminData();
+
+            // Tab switching
             document.querySelectorAll('.tab-bar .tab').forEach(tab => {
-                tab.onclick = () => {
+                tab.onclick = function() {
                     document.querySelectorAll('.tab-bar .tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
+                    this.classList.add('active');
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    const target = $('tab-' + tab.dataset.tab);
+                    const target = $('tab-' + this.dataset.tab);
                     if (target) target.classList.add('active');
-                    if (tab.dataset.tab === 'adminData') loadAdminData();
-                    if (tab.dataset.tab === 'adminDashboard') updateAdminStats();
+                    if (this.dataset.tab === 'adminData') loadAdminData();
+                    if (this.dataset.tab === 'adminDashboard') updateAdminStats();
                 };
             });
             updateAdminStats();
@@ -1077,15 +1043,18 @@
         async function loadAdminSchools() {
             schools = await fetchSchools();
             const tbody = $('schoolListBody');
+            if (!tbody) return;
             tbody.innerHTML = schools.map((s, i) =>
                 `<tr><td>${i+1}</td><td><span class="text-ellipsis">${s.name}</span></td>
                          <td style="text-align:right;"><button class="btn btn-danger btn-sm" onclick="removeSchool('${s.id}')"><i class="fas fa-trash"></i></button></td></tr>`
             ).join('');
             const sel = $('adminFilterSchool');
-            const currentVal = sel.value;
-            sel.innerHTML = `<option value="">All Schools</option>` +
-                schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-            sel.value = currentVal;
+            if (sel) {
+                const currentVal = sel.value;
+                sel.innerHTML = `<option value="">All Schools</option>` +
+                    schools.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+                sel.value = currentVal;
+            }
         }
 
         async function removeSchool(id) {
@@ -1107,27 +1076,35 @@
 
         function showAddSchoolForm() {
             const el = $('addSchoolForm');
-            el.classList.toggle('hidden');
-            if (!el.classList.contains('hidden')) $('newSchoolName').focus();
+            if (el) el.classList.toggle('hidden');
+            if (el && !el.classList.contains('hidden')) {
+                const input = $('newSchoolName');
+                if (input) input.focus();
+            }
         }
 
         async function addSchool() {
-            const name = $('newSchoolName').value.trim();
+            const input = $('newSchoolName');
+            if (!input) return;
+            const name = input.value.trim();
             if (!name) { alert('Please enter a school name.'); return; }
             await addSchool(name);
-            $('newSchoolName').value = '';
-            $('addSchoolForm').classList.add('hidden');
+            input.value = '';
+            const el = $('addSchoolForm');
+            if (el) el.classList.add('hidden');
             await loadAdminSchools();
             await loadAdminData();
             updateAdminStats();
         }
 
         async function loadAdminData() {
-            const filterSchool = $('adminFilterSchool').value;
-            const records = await fetchRecords(filterSchool || null);
+            const filterSchool = $('adminFilterSchool');
+            const filterVal = filterSchool ? filterSchool.value : '';
+            const records = await fetchRecords(filterVal || null);
             adminDataCache = records;
 
             const tbody = $('adminDataBody');
+            if (!tbody) return;
             if (records.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><i class="fas fa-inbox"></i><p>No records found</p></div></td></tr>`;
                 return;
@@ -1195,13 +1172,21 @@
                 absent += (r.absenteeism_boys || 0) + (r.absenteeism_girls || 0);
                 ovc += (r.ovc_boys || 0) + (r.ovc_girls || 0);
             });
-            $('statSchools').textContent = schoolSet.size || schools.length;
-            $('statTotalEnrol').textContent = totalEnrol;
-            $('statTeenPreg').textContent = teenPreg;
-            $('statDropouts').textContent = dropouts;
-            $('statAbsenteeism').textContent = absent;
-            $('statOVC').textContent = ovc;
-            $('lastUpdatedAdmin').textContent = new Date().toLocaleTimeString();
+            const statSchools = $('statSchools');
+            const statTotalEnrol = $('statTotalEnrol');
+            const statTeenPreg = $('statTeenPreg');
+            const statDropouts = $('statDropouts');
+            const statAbsenteeism = $('statAbsenteeism');
+            const statOVC = $('statOVC');
+            const lastUpdated = $('lastUpdatedAdmin');
+
+            if (statSchools) statSchools.textContent = schoolSet.size || schools.length;
+            if (statTotalEnrol) statTotalEnrol.textContent = totalEnrol;
+            if (statTeenPreg) statTeenPreg.textContent = teenPreg;
+            if (statDropouts) statDropouts.textContent = dropouts;
+            if (statAbsenteeism) statAbsenteeism.textContent = absent;
+            if (statOVC) statOVC.textContent = ovc;
+            if (lastUpdated) lastUpdated.textContent = new Date().toLocaleTimeString();
         }
 
         // ================================================================
@@ -1305,7 +1290,7 @@
         }
 
         // ================================================================
-        //  TEACHER (Hidden by default)
+        //  TEACHER FUNCTIONS
         // ================================================================
         let teacherSchoolIdLocal = null;
 
@@ -1316,18 +1301,22 @@
                 teacherSchoolIdLocal = schoolsList[0].id;
             }
             const sel = $('teacherSchoolSelect');
-            sel.innerHTML = schoolsList.map(s =>
-                `<option value="${s.id}" ${s.id === teacherSchoolIdLocal ? 'selected' : ''}>${s.name}</option>`
-            ).join('');
-            if (schoolsList.length > 1) {
-                $('teacherSchoolSelector').classList.remove('hidden');
-                sel.onchange = () => {
-                    teacherSchoolIdLocal = sel.value;
-                    loadTeacherData();
-                    updateTeacherSchoolName();
-                };
-            } else {
-                $('teacherSchoolSelector').classList.add('hidden');
+            if (sel) {
+                sel.innerHTML = schoolsList.map(s =>
+                    `<option value="${s.id}" ${s.id === teacherSchoolIdLocal ? 'selected' : ''}>${s.name}</option>`
+                ).join('');
+                if (schoolsList.length > 1) {
+                    const selector = $('teacherSchoolSelector');
+                    if (selector) selector.classList.remove('hidden');
+                    sel.onchange = function() {
+                        teacherSchoolIdLocal = this.value;
+                        loadTeacherData();
+                        updateTeacherSchoolName();
+                    };
+                } else {
+                    const selector = $('teacherSchoolSelector');
+                    if (selector) selector.classList.add('hidden');
+                }
             }
             updateTeacherSchoolName();
             await loadTeacherData();
@@ -1336,7 +1325,8 @@
 
         function updateTeacherSchoolName() {
             const school = schools.find(s => s.id === teacherSchoolIdLocal);
-            $('teacherSchoolName').textContent = school ? school.name : '';
+            const nameEl = $('teacherSchoolName');
+            if (nameEl) nameEl.textContent = school ? school.name : '';
         }
 
         async function loadTeacherData() {
@@ -1344,11 +1334,13 @@
             const records = await fetchRecords(teacherSchoolIdLocal);
             teacherRecords = records;
             renderTeacherData();
-            $('entryCount').textContent = records.length + ' records';
+            const countEl = $('entryCount');
+            if (countEl) countEl.textContent = records.length + ' records';
         }
 
         function renderTeacherData() {
             const tbody = $('teacherDataBody');
+            if (!tbody) return;
             if (teacherRecords.length === 0) {
                 tbody.innerHTML =
                     `<tr><td colspan="11"><div class="empty-state"><i class="fas fa-inbox"></i><p>No entries yet</p></div></td></tr>`;
@@ -1386,53 +1378,69 @@
         }
 
         function resetEntryForm() {
-            $('editEntryId').value = '';
-            $('entryFormTitle').innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry';
-            $('entrySubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save';
+            const editId = $('editEntryId');
+            const title = $('entryFormTitle');
+            const submitBtn = $('entrySubmitBtn');
+            if (editId) editId.value = '';
+            if (title) title.innerHTML = '<i class="fas fa-plus-circle" style="color:var(--accent-dark);"></i> Add New Entry';
+            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
             document.querySelectorAll('#entryForm input[type="number"]').forEach(el => el.value = '0');
             document.querySelectorAll('#entryForm input[type="text"]').forEach(el => el.value = '');
-            $('fGrade').value = '';
-            $('fAgeRange').value = '';
+            const grade = $('fGrade');
+            const ageRange = $('fAgeRange');
+            if (grade) grade.value = '';
+            if (ageRange) ageRange.value = '';
         }
 
         function editEntry(id) {
             const r = teacherRecords.find(rec => rec.id === id);
             if (!r) return;
-            $('editEntryId').value = r.id;
-            $('entryFormTitle').innerHTML = '<i class="fas fa-edit" style="color:var(--accent-dark);"></i> Edit Entry';
-            $('entrySubmitBtn').innerHTML = '<i class="fas fa-save"></i> Update';
+            const editId = $('editEntryId');
+            const title = $('entryFormTitle');
+            const submitBtn = $('entrySubmitBtn');
+            if (editId) editId.value = r.id;
+            if (title) title.innerHTML = '<i class="fas fa-edit" style="color:var(--accent-dark);"></i> Edit Entry';
+            if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
 
-            $('fGrade').value = r.grade || '';
-            $('fAgeRange').value = r.age_range || '';
-            $('fEnrolBoys').value = r.enrolment_boys || 0;
-            $('fEnrolGirls').value = r.enrolment_girls || 0;
-            $('fTeenPreg').value = r.teen_preg || 0;
-            $('fEarlyMarriageBoys').value = r.early_marriage_boys || 0;
-            $('fEarlyMarriageGirls').value = r.early_marriage_girls || 0;
-            $('fDropPregBoys').value = r.dropout_preg_boys || 0;
-            $('fDropPregGirls').value = r.dropout_preg_girls || 0;
-            $('fDropMarriageBoys').value = r.dropout_marriage_boys || 0;
-            $('fDropMarriageGirls').value = r.dropout_marriage_girls || 0;
-            $('fDropDeathBoys').value = r.dropout_death_boys || 0;
-            $('fDropDeathGirls').value = r.dropout_death_girls || 0;
-            $('fDropIllnessBoys').value = r.dropout_illness_boys || 0;
-            $('fDropIllnessGirls').value = r.dropout_illness_girls || 0;
-            $('fDropOrphanedBoys').value = r.dropout_orphaned_boys || 0;
-            $('fDropOrphanedGirls').value = r.dropout_orphaned_girls || 0;
-            $('fDropEconomicBoys').value = r.dropout_economic_boys || 0;
-            $('fDropEconomicGirls').value = r.dropout_economic_girls || 0;
-            $('fDropOvcBoys').value = r.dropout_ovc_boys || 0;
-            $('fDropOvcGirls').value = r.dropout_ovc_girls || 0;
-            $('fAbsentBoys').value = r.absenteeism_boys || 0;
-            $('fAbsentGirls').value = r.absenteeism_girls || 0;
-            $('fReentryBoys').value = r.reentry_boys || 0;
-            $('fReentryGirls').value = r.reentry_girls || 0;
-            $('fReadmissionBoys').value = r.readmission_boys || 0;
-            $('fReadmissionGirls').value = r.readmission_girls || 0;
-            $('fOvcBoys').value = r.ovc_boys || 0;
-            $('fOvcGirls').value = r.ovc_girls || 0;
+            const fields = {
+                'fGrade': r.grade || '',
+                'fAgeRange': r.age_range || '',
+                'fEnrolBoys': r.enrolment_boys || 0,
+                'fEnrolGirls': r.enrolment_girls || 0,
+                'fTeenPreg': r.teen_preg || 0,
+                'fEarlyMarriageBoys': r.early_marriage_boys || 0,
+                'fEarlyMarriageGirls': r.early_marriage_girls || 0,
+                'fDropPregBoys': r.dropout_preg_boys || 0,
+                'fDropPregGirls': r.dropout_preg_girls || 0,
+                'fDropMarriageBoys': r.dropout_marriage_boys || 0,
+                'fDropMarriageGirls': r.dropout_marriage_girls || 0,
+                'fDropDeathBoys': r.dropout_death_boys || 0,
+                'fDropDeathGirls': r.dropout_death_girls || 0,
+                'fDropIllnessBoys': r.dropout_illness_boys || 0,
+                'fDropIllnessGirls': r.dropout_illness_girls || 0,
+                'fDropOrphanedBoys': r.dropout_orphaned_boys || 0,
+                'fDropOrphanedGirls': r.dropout_orphaned_girls || 0,
+                'fDropEconomicBoys': r.dropout_economic_boys || 0,
+                'fDropEconomicGirls': r.dropout_economic_girls || 0,
+                'fDropOvcBoys': r.dropout_ovc_boys || 0,
+                'fDropOvcGirls': r.dropout_ovc_girls || 0,
+                'fAbsentBoys': r.absenteeism_boys || 0,
+                'fAbsentGirls': r.absenteeism_girls || 0,
+                'fReentryBoys': r.reentry_boys || 0,
+                'fReentryGirls': r.reentry_girls || 0,
+                'fReadmissionBoys': r.readmission_boys || 0,
+                'fReadmissionGirls': r.readmission_girls || 0,
+                'fOvcBoys': r.ovc_boys || 0,
+                'fOvcGirls': r.ovc_girls || 0,
+            };
 
-            $('entryForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            Object.keys(fields).forEach(id => {
+                const el = $(id);
+                if (el) el.value = fields[id];
+            });
+
+            const form = $('entryForm');
+            if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         async function deleteEntry(id) {
@@ -1447,44 +1455,44 @@
                 alert('No school selected.');
                 return;
             }
-            const grade = $('fGrade').value.trim();
-            if (!grade) { alert('Please enter a Grade.'); return; }
+            const grade = $('fGrade');
+            if (!grade || !grade.value.trim()) { alert('Please enter a Grade.'); return; }
 
             const payload = {
                 school_id: teacherSchoolIdLocal,
-                grade: grade,
-                age_range: $('fAgeRange').value.trim(),
-                enrolment_boys: parseInt($('fEnrolBoys').value) || 0,
-                enrolment_girls: parseInt($('fEnrolGirls').value) || 0,
-                teen_preg: parseInt($('fTeenPreg').value) || 0,
-                early_marriage_boys: parseInt($('fEarlyMarriageBoys').value) || 0,
-                early_marriage_girls: parseInt($('fEarlyMarriageGirls').value) || 0,
-                dropout_preg_boys: parseInt($('fDropPregBoys').value) || 0,
-                dropout_preg_girls: parseInt($('fDropPregGirls').value) || 0,
-                dropout_marriage_boys: parseInt($('fDropMarriageBoys').value) || 0,
-                dropout_marriage_girls: parseInt($('fDropMarriageGirls').value) || 0,
-                dropout_death_boys: parseInt($('fDropDeathBoys').value) || 0,
-                dropout_death_girls: parseInt($('fDropDeathGirls').value) || 0,
-                dropout_illness_boys: parseInt($('fDropIllnessBoys').value) || 0,
-                dropout_illness_girls: parseInt($('fDropIllnessGirls').value) || 0,
-                dropout_orphaned_boys: parseInt($('fDropOrphanedBoys').value) || 0,
-                dropout_orphaned_girls: parseInt($('fDropOrphanedGirls').value) || 0,
-                dropout_economic_boys: parseInt($('fDropEconomicBoys').value) || 0,
-                dropout_economic_girls: parseInt($('fDropEconomicGirls').value) || 0,
-                dropout_ovc_boys: parseInt($('fDropOvcBoys').value) || 0,
-                dropout_ovc_girls: parseInt($('fDropOvcGirls').value) || 0,
-                absenteeism_boys: parseInt($('fAbsentBoys').value) || 0,
-                absenteeism_girls: parseInt($('fAbsentGirls').value) || 0,
-                reentry_boys: parseInt($('fReentryBoys').value) || 0,
-                reentry_girls: parseInt($('fReentryGirls').value) || 0,
-                readmission_boys: parseInt($('fReadmissionBoys').value) || 0,
-                readmission_girls: parseInt($('fReadmissionGirls').value) || 0,
-                ovc_boys: parseInt($('fOvcBoys').value) || 0,
-                ovc_girls: parseInt($('fOvcGirls').value) || 0,
+                grade: grade.value.trim(),
+                age_range: $('fAgeRange') ? $('fAgeRange').value.trim() : '',
+                enrolment_boys: parseInt($('fEnrolBoys') ? $('fEnrolBoys').value : 0) || 0,
+                enrolment_girls: parseInt($('fEnrolGirls') ? $('fEnrolGirls').value : 0) || 0,
+                teen_preg: parseInt($('fTeenPreg') ? $('fTeenPreg').value : 0) || 0,
+                early_marriage_boys: parseInt($('fEarlyMarriageBoys') ? $('fEarlyMarriageBoys').value : 0) || 0,
+                early_marriage_girls: parseInt($('fEarlyMarriageGirls') ? $('fEarlyMarriageGirls').value : 0) || 0,
+                dropout_preg_boys: parseInt($('fDropPregBoys') ? $('fDropPregBoys').value : 0) || 0,
+                dropout_preg_girls: parseInt($('fDropPregGirls') ? $('fDropPregGirls').value : 0) || 0,
+                dropout_marriage_boys: parseInt($('fDropMarriageBoys') ? $('fDropMarriageBoys').value : 0) || 0,
+                dropout_marriage_girls: parseInt($('fDropMarriageGirls') ? $('fDropMarriageGirls').value : 0) || 0,
+                dropout_death_boys: parseInt($('fDropDeathBoys') ? $('fDropDeathBoys').value : 0) || 0,
+                dropout_death_girls: parseInt($('fDropDeathGirls') ? $('fDropDeathGirls').value : 0) || 0,
+                dropout_illness_boys: parseInt($('fDropIllnessBoys') ? $('fDropIllnessBoys').value : 0) || 0,
+                dropout_illness_girls: parseInt($('fDropIllnessGirls') ? $('fDropIllnessGirls').value : 0) || 0,
+                dropout_orphaned_boys: parseInt($('fDropOrphanedBoys') ? $('fDropOrphanedBoys').value : 0) || 0,
+                dropout_orphaned_girls: parseInt($('fDropOrphanedGirls') ? $('fDropOrphanedGirls').value : 0) || 0,
+                dropout_economic_boys: parseInt($('fDropEconomicBoys') ? $('fDropEconomicBoys').value : 0) || 0,
+                dropout_economic_girls: parseInt($('fDropEconomicGirls') ? $('fDropEconomicGirls').value : 0) || 0,
+                dropout_ovc_boys: parseInt($('fDropOvcBoys') ? $('fDropOvcBoys').value : 0) || 0,
+                dropout_ovc_girls: parseInt($('fDropOvcGirls') ? $('fDropOvcGirls').value : 0) || 0,
+                absenteeism_boys: parseInt($('fAbsentBoys') ? $('fAbsentBoys').value : 0) || 0,
+                absenteeism_girls: parseInt($('fAbsentGirls') ? $('fAbsentGirls').value : 0) || 0,
+                reentry_boys: parseInt($('fReentryBoys') ? $('fReentryBoys').value : 0) || 0,
+                reentry_girls: parseInt($('fReentryGirls') ? $('fReentryGirls').value : 0) || 0,
+                readmission_boys: parseInt($('fReadmissionBoys') ? $('fReadmissionBoys').value : 0) || 0,
+                readmission_girls: parseInt($('fReadmissionGirls') ? $('fReadmissionGirls').value : 0) || 0,
+                ovc_boys: parseInt($('fOvcBoys') ? $('fOvcBoys').value : 0) || 0,
+                ovc_girls: parseInt($('fOvcGirls') ? $('fOvcGirls').value : 0) || 0,
             };
 
-            const editId = $('editEntryId').value;
-            if (editId) payload.id = editId;
+            const editId = $('editEntryId');
+            if (editId && editId.value) payload.id = editId.value;
 
             try {
                 await saveRecord(payload);
@@ -1500,14 +1508,6 @@
         }
 
         // ================================================================
-        //  HANDLE LOGOUT (Switch to admin view)
-        // ================================================================
-        function handleLogout() {
-            // Simply reload the page to reset to admin view
-            location.reload();
-        }
-
-        // ================================================================
         //  BOOT
         // ================================================================
         (async function boot() {
@@ -1517,6 +1517,7 @@
             await initAdmin();
             console.log('📊 Mungwi District School Data System loaded.');
             console.log('✅ Admin mode active');
+            console.log('ℹ️  Connected to Supabase');
         })();
     </script>
 </body>
